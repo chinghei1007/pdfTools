@@ -8,7 +8,7 @@ import os
 
 __all__ = [
     "merge_pdfs",
-    "split_pdf",
+    "split_pdf_to_single_files",
     "split_pdf_by_ranges",
     "rotate_pages",
     "add_password",
@@ -46,7 +46,7 @@ def merge_pdfs(
         writer.write(f)
 
 
-def split_pdf(input_path: str, output_dir: str) -> List[str]:
+def split_pdf_to_single_files(input_path: str, output_dir: str) -> List[str]:
     """Split PDF into single-page files"""
     _validate_file_exists(input_path)
     _ensure_output_dir(os.path.join(output_dir, "dummy.pdf"))

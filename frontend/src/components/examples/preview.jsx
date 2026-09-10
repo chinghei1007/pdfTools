@@ -1,5 +1,7 @@
 import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { toolRegistry } from '@components/examples/toolRegistry';
+import { logUploadEvent } from '@components/upload/events';
 import {
   AppShell,
   Navbar,
@@ -28,6 +30,14 @@ function ComponentPreview() {
   const [name, setName] = useState("document");
   const [category, setCategory] = useState("conversion");
   const [tool, setTool] = useState("image-to-pdf");
+  const config = toolRegistry[tool];
+  const chooseTool = (id) => {
+    setTool(id);
+    setFiles([]);
+    setFormat(toolRegistry[id].formats[0]);
+    setQuality(80);
+    logUploadEvent('tool.changed', { tool: id, selectionCleared: true });
+  };
   const categories = [
     { id: "conversion", label: "Conversion" },
     { id: "extract", label: "Extract" },
@@ -60,7 +70,7 @@ function ComponentPreview() {
         <Navbar
           categories={categories}
           categoryId={category}
-          onCategoryChange={setCategory}
+          onCategoryChange={(id) => { setCategory(id); chooseTool({ conversion: 'image-to-pdf', extract: 'images', tools: 'merge' }[id]); }}
           onHistory={() => setDialog("history")}
           onAccount={() => setDialog("login")}
         />
@@ -71,7 +81,7 @@ function ComponentPreview() {
           title={category}
           items={groups[category]}
           selectedId={tool}
-          onSelect={setTool}
+          onSelect={chooseTool}
         />
       }
       overlays={
@@ -93,14 +103,19 @@ function ComponentPreview() {
         description="UI examples only. Processing and authentication are not connected."
         upload={
           <FileDropzone
-            accept=".pdf,image/png,image/jpeg"
+            key={tool}
+            type={config.type}
+            multiple={config.multiple}
             maxSizeBytes={20 * 1024 * 1024}
-            onFilesSelected={(selected) =>
+            onFilesSelected={(selected) => {
+              logUploadEvent('selection.stored_locally', { count: selected.length });
+              logUploadEvent('upload.skipped', { reason: 'No upload API configured; no database save occurred.' });
+              if (config.type === 'pdf') logUploadEvent('preview.request.skipped', { page: 1, reason: 'No server file ID or preview API configured.' });
               setFiles((previous) => [
-                ...previous,
+                ...(config.multiple ? previous : []),
                 ...selected.map((file) => ({ id: crypto.randomUUID(), file })),
-              ])
-            }
+              ]);
+            }}
           />
         }
         preview={
@@ -134,12 +149,9 @@ function ComponentPreview() {
               label="Output format"
               value={format}
               onChange={(event) => setFormat(event.target.value)}
-              options={[
-                { value: "pdf", label: "PDF" },
-                { value: "png", label: "PNG" },
-              ]}
+              options={config.formats.map((value) => ({ value, label: value.toUpperCase() }))}
             />
-            <Slider label="Quality" value={quality} onChange={setQuality} />
+            {format === 'jpg' && <Slider label="Quality" value={quality} onChange={setQuality} />}
           </>
         }
         result={<ResultPanel />}

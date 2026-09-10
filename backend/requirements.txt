@@ -7,3 +7,6 @@ playwright
 EbookLib
 Pillow
 pytesseract
+fastapi
+uvicorn
+python-multipart

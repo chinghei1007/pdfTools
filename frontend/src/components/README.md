@@ -24,7 +24,7 @@ The starter App.css/index.css still impose global styles. The isolated preview e
 
 ## Preview
 
-Run `npm run dev` in frontend, then open `/src/components/examples/preview.html`. This separate entry exercises uploads, previews, grid/list, keyboard-accessible reordering, nested sidebar groups, dropdowns, settings, and dialogs. Authentication/processing/downloads are intentionally disabled without callbacks; no success is simulated.
+Run `npm run dev` in frontend, then open `/previewV1`. This separate entry exercises uploads, previews, grid/list, keyboard-accessible reordering, nested sidebar groups, dropdowns, settings, and dialogs. Authentication/processing/downloads are intentionally disabled without callbacks; no success is simulated.
 
 ## Component map and contracts
 
@@ -52,3 +52,6 @@ Input file validation is a UX aid, not a replacement for backend validation. Nev
 ## Verification
 
 `npm run lint` and `npm run build` validate the existing app. To validate the entire component library (the starter app does not import it), use a separate Vite build with `src/components/index.js` as its library entry. The upload validator tests run with `node --test src/components/upload/validation.test.js`.
+
+The /previewV1 shortcut (also /previewV1.html) is configured through Vite development middleware and serves examples/previewV1.html. It is a local dev route, not a production application route or a React Router route.
+

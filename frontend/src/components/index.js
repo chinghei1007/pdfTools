@@ -1,4 +1,5 @@
 import "@components/styles.css";
+export { validate, validateFiles, inputTypes } from '@components/upload/validation';
 export { Button, IconButton, CloseButton } from "@components/buttons/Button";
 export { Input, Select, Slider } from "@components/inputs/Fields";
 export { Dialog } from "@components/dialogs/Dialog";

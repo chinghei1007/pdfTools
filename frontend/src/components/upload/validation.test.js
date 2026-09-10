@@ -2,6 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { validateFiles } from "./validation.js";
 
+test('tool categories reject the opposite category and contradictory MIME', () => {
+  const pdf = { name: 'a.pdf', type: 'application/pdf', size: 10 };
+  const image = { name: 'a.png', type: 'image/png', size: 10 };
+  assert.deepEqual(validateFiles([pdf, image], { type: 'pdf' }).accepted, [pdf]);
+  assert.deepEqual(validateFiles([pdf, image], { type: 'image' }).accepted, [image]);
+  assert.equal(validateFiles([{ ...pdf, type: 'image/png' }], { type: 'pdf' }).errors.length, 1);
+  assert.equal(validateFiles([{ ...pdf, type: '' }], { type: 'pdf' }).accepted.length, 1);
+  assert.equal(validateFiles([{ ...pdf, size: 0 }], { type: 'pdf' }).errors.length, 1);
+});
+
 test("accepts case-insensitive extensions and MIME wildcards with empty MIME fallback", () => {
   const files = [
     { name: "FILE.PDF", type: "", size: 1 },

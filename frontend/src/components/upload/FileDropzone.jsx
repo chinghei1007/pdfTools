@@ -1,10 +1,12 @@
 import { useId, useRef, useState } from "react";
 import { Button } from "@components/buttons/Button";
 import { cx, formatBytes } from "@components/utils";
-import { validateFiles } from "@components/upload/validation";
+import { validate, inputTypes } from "@components/upload/validation";
+import { logUploadEvent } from "@components/upload/events";
 
 export function FileDropzone({
   accept = ".pdf",
+  type,
   multiple = true,
   maxSizeBytes,
   disabled = false,
@@ -20,12 +22,16 @@ export function FileDropzone({
   const hintId = useId();
   const select = (files) => {
     if (disabled) return;
-    const result = validateFiles(Array.from(files), {
+    logUploadEvent('selection.received', { count: files.length });
+    const result = validate(Array.from(files), {
+      type,
       accept,
       multiple,
       maxSizeBytes,
     });
     setErrors(result.errors);
+    if (result.errors.length) logUploadEvent('validation.rejected', { count: result.errors.length });
+    if (result.accepted.length) logUploadEvent('validation.accepted', { count: result.accepted.length, type: type || 'custom' });
     onValidationError?.(result.errors);
     if (result.accepted.length) onFilesSelected?.(result.accepted);
   };
@@ -74,7 +80,7 @@ export function FileDropzone({
           ref={input}
           type="file"
           className="hidden"
-          accept={accept}
+          accept={inputTypes[type] || accept}
           multiple={multiple}
           disabled={disabled}
           onChange={(event) => {
@@ -84,7 +90,7 @@ export function FileDropzone({
         />
         <p id={hintId} className="mt-3 text-xs text-slate-600">
           {hint ||
-            `${accept || "All file types"}${maxSizeBytes ? ` · Up to ${formatBytes(maxSizeBytes)} per file` : ""}`}
+            `${inputTypes[type] || accept || "All file types"}${maxSizeBytes ? ` · Up to ${formatBytes(maxSizeBytes)} per file` : ""}`}
         </p>
       </div>
       {errors.length > 0 && (

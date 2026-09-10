@@ -7,6 +7,35 @@ import { compile } from "tailwindcss";
 
 const components = fileURLToPath(new URL("./src/components", import.meta.url));
 
+// A local development URL for the standalone component preview.
+function previewRoute() {
+  return {
+    name: "component-preview-route",
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const url = new URL(req.url || "/", "http://localhost");
+        if (
+          ["/previewV1", "/previewV1/", "/previewV1.html"].includes(
+            url.pathname,
+          )
+        ) {
+          req.url = `/src/components/examples/previewV1.html${url.search}`;
+        }
+        if (
+          [
+            "/preview_pymupdf_V1",
+            "/preview_pymupdf_V1/",
+            "/preview_pymypdf_V1",
+          ].includes(url.pathname)
+        ) {
+          req.url = `/src/components/pymupdf/preview_pymupdf_V1.html${url.search}`;
+        }
+        next();
+      });
+    },
+  };
+}
+
 // Compile this library's literal utility classes with the installed Tailwind
 // compiler. No extra package or application stylesheet changes are required.
 function componentStyles() {
@@ -59,7 +88,10 @@ function componentStyles() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), componentStyles()],
+  plugins: [react(), componentStyles(), previewRoute()],
+  server: {
+    proxy: { "/api/v1/pymupdf": "http://127.0.0.1:8001" },
+  },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

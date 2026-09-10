@@ -1,0 +1,9 @@
+Flask
+img2pdf
+pypdf
+pymupdf
+pdfplumber
+playwright
+EbookLib
+Pillow
+pytesseract

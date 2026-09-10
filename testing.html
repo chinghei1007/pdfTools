@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PDF Toolkit</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+  body {
+    min-height: 100vh;
+    background: #f5f7fa;
+    transition: background 0.4s ease;
+  }
+
+  /* ---------- Top Header ---------- */
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 14px 28px;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 18px;
+  }
+
+  .brand {
+    margin-right: auto;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.5px;
+  }
+  .brand span { color: #ff6b9d; }
+
+  .history-btn {
+    padding: 8px 18px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #444;
+    transition: all 0.2s;
+  }
+  .history-btn:hover { background: #f0f0f0; border-color: #bbb; }
+
+  /* ---------- Dropdown ---------- */
+  .dropdown { position: relative; }
+
+  .dropdown-toggle {
+    padding: 8px 18px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dropdown-toggle:hover { background: #555; }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #fff;
+    border-radius: 8px;
+    min-width: 200px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+    transition: all 0.25s ease;
+  }
+  .dropdown-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .dropdown-menu button {
+    width: 100%;
+    padding: 12px 18px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .dropdown-menu button:hover { background: #f7f7f7; }
+  .dropdown-menu button.active {
+    background: #f0f0f0;
+    font-weight: 600;
+    border-left-color: #333;
+  }
+
+  /* ---------- Section Layout ---------- */
+  .section {
+    display: none;
+    min-height: calc(100vh - 60px);
+    transition: background 0.4s ease;
+  }
+  .section.active { display: flex; }
+
+  #conversion { background: #FFE5EC; } /* light pink */
+  #extract    { background: #D4F4E2; } /* light turquoise */
+  #tools      { background: #ffedd2; } /* light orange */
+
+  /* ---------- Sidebar ---------- */
+  .sidebar {
+    width: 240px;
+    padding: 20px 0px 20px 20px
+    background: rgba(255,255,255,0.45);
+    backdrop-filter: blur(6px);
+    border-right: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .sidebar h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #555;
+    margin-bottom: 14px;
+    padding-left: 10px;
+  }
+
+  .sidebar ul { list-style: none; }
+
+  .sidebar li {
+    padding: 11px 14px;
+    margin-bottom: 6px;
+    border-radius: 6px 0 0 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar li:hover {
+    background: rgba(255,255,255,0.7);
+    transform: translateX(3px);
+  }
+  .sidebar li.active {
+    background: rgba(255,255,255,0.85);
+    font-weight: 600;
+    border-left-color: #333;
+  }
+
+  /* ---------- Main content ---------- */
+  .main {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    background: #fff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .card h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .card p { color: #666; font-size: 14px; line-height: 1.6; }
+
+  .upload-area {
+    margin-top: 24px;
+    padding: 40px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upload-area:hover { border-color: #888; background: #fafafa; }
+
+  .action-btn {
+    margin-top: 20px;
+    padding: 10px 28px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .action-btn:hover { background: #555; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="brand">PDF<span>Toolkit</span></div>
+  <button class="history-btn">🕘 History</button>
+  <div class="dropdown">
+    <button class="dropdown-toggle" id="menuBtn">Menu ▾</button>
+    <div class="dropdown-menu" id="menu">
+      <button data-target="conversion" class="active">Conversion</button>
+      <button data-target="extract">Extract</button>
+      <button data-target="tools">Tools</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONVERSION SECTION -->
+<div class="section active" id="conversion">
+  <aside class="sidebar">
+    <h3>Conversion</h3>
+    <ul>
+      <li class="active" data-title="Image to PDF" data-desc="Convert JPG, PNG, or other images into a single PDF document.">Image to PDF</li>
+      <li data-title="PDF to Image" data-desc="Extract each page of your PDF as a high-quality image.">PDF to Image</li>
+      <li data-title="PDF to Text / OCR" data-desc="Extract text from PDFs, including scanned documents via OCR.">PDF to Text / OCR Text</li>
+      <li data-title="HTML to PDF" data-desc="Render any HTML page or snippet into a pixel-perfect PDF.">HTML to PDF</li>
+      <li data-title="PDF to ePub" data-desc="Convert PDF documents into reflowable ePub eBooks.">PDF to ePub</li>
+    </ul>
+  </aside>
+  <div class="main">
+    <div class="card">
+      <h2 id="conv-title">Image to PDF</h2>
+      <p id="conv-desc">Convert JPG, PNG, or other images into a single PDF document.</p>
+      <div class="upload-area">📁 Drop files here or click to browse</div>
+      <button class="action-btn">Convert</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXTRACT SECTION -->
+<div class="section" id="extract">
+  <aside class="sidebar">
+    <h3>Extract</h3>
+    <ul>
+      <li class="active" data-title="Extract Images" data-desc="Pull every embedded image out of your PDF file.">Extract Images</li>
+      <li data-title="Extract Tables" data-desc="Detect and export tabular data from PDF pages.">Extract Tables</li>
+      <li data-title="Extract Metadata" data-desc="Export document metadata as JSON or plain TXT.">Extract Metadata (JSON / TXT)</li>
+      <li data-title="Extract Annotations" data-desc="Retrieve highlights, comments, and notes from the PDF.">Extract Annotations</li>
+    </ul>
+  </aside>
+  <div class="main">
+    <div class="card">
+      <h2 id="ext-title">Extract Images</h2>
+      <p id="ext-desc">Pull every embedded image out of your PDF file.</p>
+      <div class="upload-area">📁 Drop files here or click to browse</div>
+      <button class="action-btn">Extract</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS SECTION -->
+<div class="section" id="tools">
+  <aside class="sidebar">
+    <h3>Tools</h3>
+    <ul>
+      <li class="active" data-title="Split or Merge PDF" data-desc="Combine multiple PDFs or split one into separate files.">Split or Merge PDF</li>
+      <li data-title="Rotate Pages" data-desc="Rotate individual pages or the entire document.">Rotate Pages</li>
+      <li data-title="Reorder Pages" data-desc="Drag-and-drop to rearrange the page order.">Reorder Pages</li>
+      <li data-title="Compress PDF" data-desc="Reduce file size while preserving quality.">Compress PDF</li>
+      <li data-title="Add / Remove Watermarks" data-desc="Stamp text or image watermarks on every page.">Add / Remove Watermarks</li>
+      <li data-title="Add / Remove Passwords" data-desc="Protect your PDF with encryption or unlock it.">Add / Remove Passwords</li>
+      <li data-title="Redaction" data-desc="Permanently black out sensitive text or regions.">Redaction</li>
+    </ul>
+  </aside>
+  <div class="main">
+    <div class="card">
+      <h2 id="tool-title">Split or Merge PDF</h2>
+      <p id="tool-desc">Combine multiple PDFs or split one into separate files.</p>
+      <div class="upload-area">📁 Drop files here or click to browse</div>
+      <button class="action-btn">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Dropdown toggle
+  const menuBtn = document.getElementById('menuBtn');
+  const menu = document.getElementById('menu');
+  menuBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    menu.classList.toggle('open');
+  });
+  document.addEventListener('click', () => menu.classList.remove('open'));
+
+  // Switch sections
+  const sections = document.querySelectorAll('.section');
+  const menuItems = document.querySelectorAll('.dropdown-menu button');
+  menuItems.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.target;
+      sections.forEach(s => s.classList.toggle('active', s.id === target));
+      menuItems.forEach(b => b.classList.toggle('active', b === btn));
+      menu.classList.remove('open');
+    });
+  });
+
+  // Sidebar item click — update card content
+  function wireSidebar(sectionId, titleId, descId) {
+    const items = document.querySelectorAll(`#${sectionId} .sidebar li`);
+    const title = document.getElementById(titleId);
+    const desc = document.getElementById(descId);
+    items.forEach(li => {
+      li.addEventListener('click', () => {
+        items.forEach(x => x.classList.remove('active'));
+        li.classList.add('active');
+        title.textContent = li.dataset.title;
+        desc.textContent = li.dataset.desc;
+      });
+    });
+  }
+
+  wireSidebar('conversion', 'conv-title', 'conv-desc');
+  wireSidebar('extract',    'ext-title',  'ext-desc');
+  wireSidebar('tools',      'tool-title', 'tool-desc');
+</script>
+
+</body>
+</html>

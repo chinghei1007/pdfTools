@@ -1,0 +1,372 @@
+Recommended install set by folder:
+1. frontend/package.json (required for Vite + React + PDF UI)
+   - react
+   - react-dom
+   - react-router-dom (route package)
+   - zustand
+   - vite
+   - @vitejs/plugin-react
+   - typescript
+   - @types/react
+   - @types/react-dom
+   - tailwindcss
+   - postcss
+   - autoprefixer
+   - pdf-lib
+   - pdfjs-dist
+   - jspdf
+   - html2canvas
+   - file-saver
+   - tesseract.js (only if OCR needed)
+   - jszip (only if you need zip download batches)
+2. backend/package.json (only if you plan server APIs later; otherwise skip completely)
+   - express
+   - cors
+   - multer
+   - dotenv
+   - zod
+   - helmet
+   - morgan
+   - tsx (or ts-node)
+   - typescript
+   - @types/node
+   - @types/express
+
+cd frontend
+npm i react react-dom react-router-dom zustand pdf-lib pdfjs-dist jspdf html2canvas file-saver jszip tesseract.js
+npm i -D vite @vitejs/plugin-react typescript @types/react @types/react-dom tailwindcss postcss autoprefixer
+
+
+original mermaid
+classDiagram
+
+    navbar <-- Menu
+
+    sideBar <-- Menu
+
+    navbar <-- History
+
+    Body --> navbar
+
+    Body --> sideBar
+
+    Body --> Main Container
+
+
+
+    General: Black Button
+
+    General: White Button
+
+    General: Close Button
+
+    General: Dropdown
+
+    General: Dropdown Button
+
+    General: Drop Files
+
+    General: Upload Loading
+
+    General: File Progress
+
+    General: hove&#x72;**()**
+
+    General: colou&#x72;**()**
+
+    General: highligh&#x74;**()**
+
+    General: transfor&#x6D;**()**
+
+
+
+    Body: navbar
+
+    Body: sideBar
+
+    Body: Main Container
+
+
+
+    navbar: Icon
+
+    navbar: History
+
+    navbar: Menu
+
+
+
+    History: Previous Uploads
+
+    History: getd&#x62;**()**
+
+
+
+    Menu: Conversion
+
+    Menu: Conversion - Img2PDF
+
+    Menu: Conversion - PDF2Img
+
+    Menu: Conversion - PDF2Text[w/ OCR]
+
+    Menu: Conversion - HTML2PDF
+
+    Menu: Conversion - HTML2ePub
+
+    Menu: Extract
+
+    Menu: Extract - Images
+
+    Menu: Extract - Tables
+
+    Menu: Extract - Metadata
+
+    Menu: Extract - Annotations
+
+    Menu: Tools
+
+    Menu: Tools - Split / Merge
+
+    Menu: Tools - Rotate Pages
+
+    Menu: Tools - Reorder Pages
+
+    Menu: Tools - Compress
+
+    Menu: Tools - Watermark
+
+    Menu: Tools - Passwords
+
+    Menu: Tools - Redaction
+
+    Menu: Dropdown Butto&#x6E;**()**
+
+
+
+    sideBar: Header
+
+    sideBar: buttons [child]
+
+    sideBar: Expandable buttons [child]
+
+
+
+    Main Container: DropFile
+
+    Main Container: Fileviewer
+
+    Main Container: Processing
+
+    Main Container: Unsuccessful
+
+    Main Container: Successful
+
+    Main Container: Quality
+
+    Main Container: slide&#x72;**()**
+
+    Main Container: inpu&#x74;**()**
+
+    Main Container: dropdow&#x6E;**()**
+
+    Main Container: dynamicDro&#x70;**()**
+
+    Main Container: orde&#x72;**()**
+
+    Main Container: grid/lis&#x74;**()**
+
+    Main Container: file colorCod&#x65;**()**
+
+
+
+please review the testing.html and mermaid and tell me&#x20;
+
+1. this is classifying different compoenets use, not really a thing to show relations
+2. there might be some mixed up between features and components wise
+3. planning to apply as react vite setup
+4. please help me think what should be added or modified so that the components roadmap would be clearer
+
+after Astra's suggestion
+| Your current entry | What it represents | Suggested treatment |
+|---|---|---|
+| Body, navbar, sideBar | Layout components | `AppShell`, `Navbar`, `Sidebar` |
+| Black Button, White Button | Visual variants | One `Button` with `primary` / `secondary` variants |
+| Close Button | Specialized control | `IconButton` with an accessible label |
+| Conversion, Extract, Tools | Navigation categories | Configuration data |
+| Image to PDF, OCR, Rotate | Product features | Feature modules |
+| Drop Files | Reusable file input | `FileDropzone` |
+| Fileviewer | Preview component | `FilePreview`; introduce page previews where needed |
+| Processing, Successful, Unsuccessful | Workflow states | State values rendered by progress/result components |
+| Quality | Feature-specific setting | Put inside the relevant tool’s options |
+| Slider, Input, Dropdown | Form controls | Reusable controls used by options panels |
+| Hover, colour, highlight, transform | Styling and interaction states | Tailwind classes and component variants |
+| `getdb()` | Persistence logic | History hook/storage module, outside rendering |
+| Order, grid/list, file colour code | Behavior or display preferences | Explicit state and props on the relevant viewer |
+
+flowchart TD
+    App --> AppShell
+
+    AppShell --> Navbar
+    AppShell --> Sidebar
+    AppShell --> ToolWorkspace
+    AppShell --> HistoryPanel
+
+    Navbar --> Brand
+    Navbar --> HistoryButton
+    Navbar --> CategoryMenu
+
+    Sidebar --> SidebarHeader
+    Sidebar --> ToolNavItem
+
+    ToolWorkspace --> ToolHeader
+    ToolWorkspace --> FileDropzone
+    ToolWorkspace --> FileCollection
+    ToolWorkspace --> ToolOptions
+    ToolWorkspace --> RunButton
+    ToolWorkspace --> ProcessingStatus
+    ToolWorkspace --> ResultPanel
+
+    FileCollection --> FileItem
+    FileItem --> FilePreview
+
+    ToolOptions --> SelectedToolOptions["Selected tool's options"]
+
+Backend thinking proceses
+Original Prompt
+as what i say, without adding anything, what field would you expect if i talk something like this
+so now, let's say we are planing about the backend, where I would like the convert all the things into an api crud, and that there will be a very simple database that logs, user authentication (which it looks like the current react compoent tree will be different, i will be reusing the popup from the history)
+
+what should be the schema of the database, user id, username, password, register day, expire day, another table where storing who made the changes, pointing to the relative path to that of the backend - (what are more tables, and how should the backend structure looking like)
+
+
+
+i will first propose one, because i totally does not have a sense of pdf tools, i accept both python and npm scripts or libraries that help me achiving the same thing&#x20;
+
+1. get available tools (as mentioned, python and node.js library accepted)
+2. create user, fetch existing user (or certain filter user, expired user, active user, filter by year, month, enlong log), update user (create, delete, log in log, usernamr change, password change, email change, telegram verify or 2FA setup, remove, baseline PIN)
+
+what are some other things that also suit inside of backend
+(without adding other things, it will look something like this)
+
+📊 Database Schema (Core Tables)
+1. Users
+user_id (PK, UUID or auto-increment)
+
+username (unique)
+
+password_hash (never store plain text)
+
+email (optional, for recovery/2FA)
+
+telegram_id (optional, for Telegram verification)
+
+register_date
+
+expire_date (nullable, for subscription/expiry)
+
+status (active, expired, banned, pending)
+
+baseline_pin (optional, for secondary auth)
+
+2. Auth Logs
+log_id (PK)
+
+user_id (FK → Users)
+
+action (login, logout, password_change, 2FA_setup, etc.)
+
+timestamp
+
+ip_address (optional, for security)
+
+device_info (optional)
+
+3. Audit Trail
+audit_id (PK)
+
+actor_id (FK → Users, who made the change)
+
+target_id (FK → Users, whose record was changed)
+
+action (create, update, delete)
+
+relative_path (e.g., /api/users/update)
+
+timestamp
+
+4. Sessions / Tokens
+session_id (PK)
+
+user_id (FK → Users)
+
+token (JWT or random string)
+
+issued_at
+
+expires_at
+
+revoked (boolean)
+
+🛠️ Backend Structure (API CRUD)
+Core Endpoints
+User Management
+
+POST /users → create user
+
+GET /users → list/filter users (active, expired, by year/month)
+
+GET /users/{id} → fetch single user
+
+PUT /users/{id} → update user (username, password, email, 2FA, etc.)
+
+DELETE /users/{id} → remove user
+
+Authentication
+
+POST /auth/login
+
+POST /auth/logout
+
+POST /auth/refresh (token refresh)
+
+POST /auth/2fa/setup
+
+POST /auth/2fa/verify
+
+Logs & Audit
+
+GET /logs → fetch login/logout logs
+
+GET /audit → fetch audit trail
+
+POST /audit → record changes automatically via middleware
+
+
+With Astra adding needed fields
+| Table | Main columns | Purpose |
+|---|---|---|
+| `users` | `id`, `username`, `email`, `password_hash`, `role`, `status`, `created_at`, `updated_at`, `access_expires_at`, `email_verified_at`, `last_login_at`, `deleted_at` | Account identity and access |
+| `sessions` | `id`, `user_id FK`, `token_hash`, `created_at`, `expires_at`, `revoked_at`, `last_seen_at` | Login sessions and logout/revocation |
+| `files` | `id`, `owner_id FK`, `storage_key`, `original_name`, `media_type`, `size_bytes`, `page_count`, `status`, `created_at`, `expires_at`, `deleted_at` | Uploaded and generated file records |
+| `jobs` | `id`, `user_id FK`, `tool_id`, `tool_version`, `options_json`, `status`, `progress`, `error_code`, `created_at`, `started_at`, `finished_at` | A requested conversion or document operation |
+| `job_files` | `job_id FK`, `file_id FK`, `role`, `position` | Connect jobs to their input/output files and preserve ordering |
+| `audit_events` | `id`, `actor_user_id FK nullable`, `action`, `target_type`, `target_id`, `outcome`, `details_json`, `request_id`, `created_at` | Who did what, to which record, and when |
+
+auth related
+| Table | Main columns | Used for |
+|---|---|---|
+| `auth_challenges` | `id`, `user_id`, `purpose`, `token_hash`, `pending_value`, `expires_at`, `used_at`, `attempt_count` | Email verification, password reset, confirming email changes |
+| `mfa_methods` | `id`, `user_id`, `type`, `secret_encrypted`, `verified_at`, `disabled_at` | Authenticator-based 2FA |
+| `recovery_codes` | `id`, `user_id`, `code_hash`, `used_at` | One-use recovery when a second factor is unavailable |
+| `external_identities` | `id`, `user_id`, `provider`, `provider_user_id`, `verified_at` | Verified Telegram account association |
+
+| Capability | Candidate |
+|---|---|
+| Image → PDF | [img2pdf](https://pypi.org/project/img2pdf/) |
+| Split, merge, rotate, reorder, metadata, annotations, watermark addition, passwords | [pypdf](https://pypdf.readthedocs.io/en/stable/) |
+| PDF → images, extraction, applied redactions | [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/) |
+| OCR | [PyMuPDF with separately installed Tesseract](https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html) |
+| Table extraction | [pdfplumber](https://github.com/jsvine/pdfplumber), particularly for machine-generated PDFs |
+| HTML → PDF | [Playwright’s PDF rendering](https://playwright.dev/python/docs/api/class-page#page-pdf) |
+| HTML → ePub packaging | [EbookLib](https://docs.sourcefabric.org/projects/ebooklib/en/latest/) |

@@ -1,0 +1,7 @@
+{
+  "name": "pdftools-root",
+  "private": true,
+  "scripts": {
+    "backendSetup": "node scripts/backend-setup.mjs"
+  }
+}

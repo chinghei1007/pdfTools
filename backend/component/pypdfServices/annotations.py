@@ -6,12 +6,17 @@ PDF annotation handling - read and write various annotation types
 from pypdf import PdfReader, PdfWriter
 from pypdf.annotations import (
     FreeText, Rectangle, Ellipse, Line,
-    Polygon, PolyLine, Highlight, Underline,
-    Squiggly, StrikeOut, Text, Link, Popup
+    Polygon, PolyLine, Highlight,
+    Text, Link, Popup
 )
 from pypdf.generic import RectangleObject
 from typing import List, Optional, Tuple, Union
 import os
+import sys
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from component.common import validate_file_exists, ensure_output_dir
 
 __all__ = [
     "add_free_text",

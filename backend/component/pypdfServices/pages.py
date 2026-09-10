@@ -6,6 +6,11 @@ Page transformations: scale, crop, transform, merge pages
 from pypdf import PdfReader, PdfWriter, Transformation
 from typing import Optional, Tuple, List
 import os
+import sys
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from component.common import validate_file_exists, ensure_output_dir
 
 __all__ = [
     "scale_page",
@@ -34,8 +39,8 @@ def scale_page(
         target_size: Scale to specific dimensions (width, height)
         page_number: Specific page, None for all
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -65,8 +70,8 @@ def crop_page(
         crop_box: (x_min, y_min, x_max, y_max)
         page_number: Specific page, None for all
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -102,8 +107,8 @@ def transform_page(
         translate_y: Vertical translation
         page_number: Specific page, None for all
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -132,9 +137,9 @@ def merge_pages_overlay(
     overlay_page: int = 0
 ) -> None:
     """Merge overlay page onto all pages of base PDF"""
-    _validate_file_exists(base_path)
-    _validate_file_exists(overlay_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(base_path)
+    validate_file_exists(overlay_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(base_path)
     overlay = PdfReader(overlay_path).pages[overlay_page]
@@ -155,9 +160,9 @@ def merge_pages_underlay(
     underlay_page: int = 0
 ) -> None:
     """Merge underlay page behind all pages of base PDF"""
-    _validate_file_exists(base_path)
-    _validate_file_exists(underlay_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(base_path)
+    validate_file_exists(underlay_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(base_path)
     underlay = PdfReader(underlay_path).pages[underlay_page]
@@ -177,8 +182,8 @@ def remove_pages(
     page_numbers: List[int]
 ) -> None:
     """Remove specific pages from PDF"""
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     writer = PdfWriter()
     writer.append(input_path)
@@ -199,9 +204,9 @@ def insert_page(
     insert_page_num: int = 0
 ) -> None:
     """Insert a page at specific position"""
-    _validate_file_exists(input_path)
-    _validate_file_exists(insert_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    validate_file_exists(insert_path)
+    ensure_output_dir(output_path)
     
     writer = PdfWriter()
     writer.append(input_path)
@@ -226,8 +231,8 @@ def reorder_pages(
     Args:
         new_order: List of page indices in desired order, e.g., [2, 0, 1]
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -237,14 +242,3 @@ def reorder_pages(
     
     with open(output_path, "wb") as f:
         writer.write(f)
-
-
-def _validate_file_exists(path: str) -> None:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"File not found: {path}")
-
-
-def _ensure_output_dir(path: str) -> None:
-    dir_name = os.path.dirname(path)
-    if dir_name and not os.path.exists(dir_name):
-        os.makedirs(dir_name)

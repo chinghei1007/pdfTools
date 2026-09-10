@@ -5,6 +5,11 @@ Core PDF operations: merge, split, encrypt, decrypt, rotate
 from pypdf import PdfReader, PdfWriter
 from typing import List, Optional, Union
 import os
+import sys
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from component.common import validate_file_exists, ensure_output_dir
 
 __all__ = [
     "merge_pdfs",
@@ -31,11 +36,11 @@ def merge_pdfs(
         page_ranges: Optional list of (start, end) tuples for each input
                     Example: [(0, 5), (2, 10)] means pages 0-4 from first, 2-9 from second
     """
-    _ensure_output_dir(output_path)
+    ensure_output_dir(output_path)
     writer = PdfWriter()
     
     for i, path in enumerate(input_paths):
-        _validate_file_exists(path)
+        validate_file_exists(path)
         if page_ranges and i < len(page_ranges):
             start, end = page_ranges[i]
             writer.append(path, pages=(start, end))
@@ -48,8 +53,8 @@ def merge_pdfs(
 
 def split_pdf_to_single_files(input_path: str, output_dir: str) -> List[str]:
     """Split PDF into single-page files"""
-    _validate_file_exists(input_path)
-    _ensure_output_dir(os.path.join(output_dir, "dummy.pdf"))
+    validate_file_exists(input_path)
+    ensure_output_dir(os.path.join(output_dir, "dummy.pdf"))
     
     reader = PdfReader(input_path)
     output_paths = []
@@ -77,8 +82,8 @@ def split_pdf_by_ranges(
     Args:
         ranges: List of (start, end) tuples, e.g., [(0, 5), (5, 10), (10, None)]
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(os.path.join(output_dir, "dummy.pdf"))
+    validate_file_exists(input_path)
+    ensure_output_dir(os.path.join(output_dir, "dummy.pdf"))
     
     reader = PdfReader(input_path)
     output_paths = []
@@ -112,8 +117,8 @@ def rotate_pages(
         degrees: 90, 180, or 270
         page_numbers: List of page indices (0-based), None for all pages
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -142,8 +147,8 @@ def add_password(
         owner_password: Password for full access (defaults to user_password)
         permissions_flag: Permission flags (-1 for all permissions)
     """
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     writer = PdfWriter()
@@ -170,8 +175,8 @@ def remove_password(
     password: str
 ) -> None:
     """Remove password protection from PDF"""
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     reader = PdfReader(input_path)
     if reader.is_encrypted:
@@ -187,8 +192,8 @@ def remove_password(
 
 def flatten_pdf(input_path: str, output_path: str) -> None:
     """Flatten PDF (merge form fields into content)"""
-    _validate_file_exists(input_path)
-    _ensure_output_dir(output_path)
+    validate_file_exists(input_path)
+    ensure_output_dir(output_path)
     
     writer = PdfWriter()
     writer.append(input_path)
@@ -196,15 +201,3 @@ def flatten_pdf(input_path: str, output_path: str) -> None:
     
     with open(output_path, "wb") as f:
         writer.write(f)
-
-
-# Helper functions
-def _validate_file_exists(path: str) -> None:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"File not found: {path}")
-
-
-def _ensure_output_dir(path: str) -> None:
-    dir_name = os.path.dirname(path)
-    if dir_name and not os.path.exists(dir_name):
-        os.makedirs(dir_name)

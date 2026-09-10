@@ -3,7 +3,7 @@
 PDF Service - Comprehensive pypdf wrapper
 """
 
-from . import core
+from . import basic as core
 from . import text
 from . import images
 from . import annotations

@@ -1,0 +1,5 @@
+/* Utilities only: no Preflight reset of the existing application. */
+@layer theme, utilities;
+@layer utilities {
+  @tailwind utilities;
+}

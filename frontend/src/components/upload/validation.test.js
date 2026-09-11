@@ -20,7 +20,17 @@ test("accepts case-insensitive extensions and MIME wildcards with empty MIME fal
   assert.deepEqual(validateFiles(files, { accept: ".pdf,image/*" }), {
     accepted: files,
     errors: [],
+    issues: [],
   });
+});
+test('zero-byte handoffs report a diagnostic without rejecting a nonempty PDF', () => {
+  const empty = new File([], 'document.pdf', { type: 'application/pdf' });
+  const nonempty = new File(['%PDF-1.7'], 'document.pdf', { type: 'application/pdf' });
+  const result = validateFiles([empty, nonempty], { type: 'pdf' });
+  assert.deepEqual(result.accepted, [nonempty]);
+  assert.equal(result.issues[0].code, 'zero_bytes');
+  assert.equal(result.issues[0].sizeBytes, 0);
+  assert.match(result.errors[0], /browser received 0 bytes/);
 });
 test("rejects oversized and unsupported files without rejecting valid siblings", () => {
   const valid = { name: "ok.pdf", type: "application/pdf", size: 10 };

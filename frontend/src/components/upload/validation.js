@@ -16,6 +16,11 @@ export function validate(
     .filter(Boolean);
   const accepted = [];
   const errors = [];
+  const issues = [];
+  const reject = (file, code, message) => {
+    errors.push(`${file.name}: ${message}`);
+    issues.push({ code, sizeBytes: file.size, mediaType: file.type || 'unknown' });
+  };
   for (const file of files) {
     const mediaType = file.type.toLowerCase();
     const validType =
@@ -31,15 +36,15 @@ export function validate(
     const mime = type === 'pdf' ? ['application/pdf'] : ['image/jpeg', 'image/png'];
     const extension = type === 'pdf' ? /\.pdf$/i : /\.(jpe?g|png)$/i;
     const matchesCategory = !type || (extension.test(file.name) && (!file.type || mime.includes(file.type.toLowerCase())));
-    if (!validType || !matchesCategory) errors.push(`${file.name}: unsupported file type.`);
-    else if (file.size === 0) errors.push(`${file.name}: file is empty.`);
+    if (!validType || !matchesCategory) reject(file, 'unsupported_type', 'unsupported file type.');
+    else if (file.size === 0) reject(file, 'zero_bytes', 'the browser received 0 bytes. If this file is not empty, save/download it to a local folder, then use Browse files.');
     else if (maxSizeBytes && file.size > maxSizeBytes)
-      errors.push(`${file.name}: file exceeds the size limit.`);
+      reject(file, 'too_large', 'file exceeds the size limit.');
     else if (!multiple && accepted.length)
-      errors.push(`${file.name}: select one file at a time.`);
+      reject(file, 'too_many', 'select one file at a time.');
     else accepted.push(file);
   }
-  return { accepted, errors };
+  return { accepted, errors, issues };
 }
 
 export const validateFiles = validate;

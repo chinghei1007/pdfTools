@@ -20,9 +20,16 @@ export function FileDropzone({
   const [dragging, setDragging] = useState(false);
   const [errors, setErrors] = useState([]);
   const hintId = useId();
-  const select = (files) => {
+  const select = (files, source) => {
     if (disabled) return;
-    logUploadEvent('selection.received', { count: files.length });
+    logUploadEvent('selection.received', { count: files.length, source, files: Array.from(files, (file) => ({ sizeBytes: file.size, mediaType: file.type || 'unknown' })) });
+    if (!files.length && source === 'drop') {
+      const message = 'No file bytes were provided by this drag. Save the document locally and use Browse files.';
+      setErrors([message]);
+      onValidationError?.([message]);
+      logUploadEvent('validation.rejected', { source, code: 'no_files' });
+      return;
+    }
     const result = validate(Array.from(files), {
       type,
       accept,
@@ -30,7 +37,7 @@ export function FileDropzone({
       maxSizeBytes,
     });
     setErrors(result.errors);
-    if (result.errors.length) logUploadEvent('validation.rejected', { count: result.errors.length });
+    if (result.errors.length) logUploadEvent('validation.rejected', { count: result.errors.length, source, issues: result.issues });
     if (result.accepted.length) logUploadEvent('validation.accepted', { count: result.accepted.length, type: type || 'custom' });
     onValidationError?.(result.errors);
     if (result.accepted.length) onFilesSelected?.(result.accepted);
@@ -57,7 +64,7 @@ export function FileDropzone({
           event.preventDefault();
           depth.current = 0;
           setDragging(false);
-          select(event.dataTransfer.files);
+          select(event.dataTransfer.files, 'drop');
         }}
         className={cx(
           "rounded-xl border-2 border-dashed p-8 text-center",
@@ -84,7 +91,7 @@ export function FileDropzone({
           multiple={multiple}
           disabled={disabled}
           onChange={(event) => {
-            select(event.target.files);
+            select(event.target.files, 'browse');
             event.target.value = "";
           }}
         />

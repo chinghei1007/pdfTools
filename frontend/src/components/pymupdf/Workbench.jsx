@@ -13,8 +13,10 @@ import {
 } from "@components";
 import { request } from "@components/pymupdf/api";
 import { logUploadEvent } from "@components/upload/events";
+import RequirementsChecklist from "@components/pypdf/RequirementsChecklist";
 
-export default function Workbench() {
+export default function Workbench({ engine = "pymupdf" }) {
+  const operationPrefix = engine === "pypdf" ? "/pypdf" : "";
   const [tools, setTools] = useState([]);
   const [selected, setSelected] = useState("render");
   const [files, setFiles] = useState([]);
@@ -30,7 +32,7 @@ export default function Workbench() {
   const tool = tools.find((item) => item.id === selected);
   useEffect(() => {
     const abort = new AbortController();
-    request("/tools", undefined, abort.signal)
+    request(`${operationPrefix}/tools`, undefined, abort.signal)
       .then((items) => {
         setTools(items);
         setOptions(
@@ -45,7 +47,7 @@ export default function Workbench() {
         if (failure.name !== "AbortError") setError(failure.message);
       });
     return () => abort.abort();
-  }, []);
+  }, [operationPrefix]);
   const choose = (id) => {
     if (pending.current) return;
     setSelected(id);
@@ -153,7 +155,7 @@ export default function Workbench() {
   const run = () =>
     execute(async () => {
       setResult(null);
-      const output = await request(`/operations/${tool.id}`, {
+      const output = await request(`${operationPrefix}/operations/${tool.id}`, {
         file_ids: files.map((f) => f.id),
         options,
         passwords: Object.fromEntries(files.map((f) => [f.id, f.password])),
@@ -169,7 +171,11 @@ export default function Workbench() {
     <AppShell
       navbar={
         <Navbar
-          brand="PyMuPDF Workbench · V1"
+          brand={
+            engine === "pypdf"
+              ? "pypdf Workbench · V1"
+              : "PyMuPDF Workbench · V1"
+          }
           categories={categories}
           categoryId={category}
           onCategoryChange={(id) =>
@@ -191,7 +197,7 @@ export default function Workbench() {
       <div className="mx-auto flex max-w-5xl flex-col gap-5">
         <BodyCard
           title={tool?.label || "Connecting to the service"}
-          description="Local document processing. Uploads are saved on this computer; originals are preserved. Select a category from Menu."
+          description={`Local document processing. Uploads are saved on this computer; originals are preserved. Select a category from Menu. Engine: ${tool?.engine || "PyMuPDF"}.`}
         >
           {error && (
             <p role="alert" className="text-red-700">
@@ -295,9 +301,10 @@ export default function Workbench() {
                 )}
               </div>
             </BodyCard>
-            {selected === "select" && files.length === 1 && (
+            {selected === "select" && (
               <BodyCard title="Individual page order">
-                <Button disabled={busy} onClick={loadPages}>
+                {files.length !== 1 && <p className="text-sm text-slate-600">Upload one PDF, then load its individual pages and use Earlier / Later to reorder them.</p>}
+                <Button disabled={busy || files.length !== 1} onClick={loadPages}>
                   Load page thumbnails
                 </Button>
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -344,48 +351,52 @@ export default function Workbench() {
             </a>
           </BodyCard>
         )}
-        <BodyCard
-          title="PyMuPDF API reference"
-          description="Full public symbol inventory for the installed version. This reference includes low-level APIs; only the document operations in Menu are executable through HTTP."
-        >
-          <Button
-            variant="secondary"
-            disabled={busy}
-            onClick={() =>
-              execute(async () => setCatalog(await request("/catalog")))
-            }
+        {engine === "pypdf" ? (
+          <RequirementsChecklist />
+        ) : (
+          <BodyCard
+            title="PyMuPDF API reference"
+            description="Full public symbol inventory for the installed version. This reference includes low-level APIs; only the document operations in Menu are executable through HTTP."
           >
-            Load API catalogue
-          </Button>
-          {catalog && (
-            <div className="mt-4">
-              <Input
-                label={`Search API symbols (PyMuPDF ${catalog.version})`}
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              <div className="mt-4 max-h-80 overflow-auto">
-                {catalog.symbols
-                  .filter((item) =>
-                    `${item.name} ${item.members.join(" ")}`
-                      .toLowerCase()
-                      .includes(query.toLowerCase()),
-                  )
-                  .map((item) => (
-                    <details key={item.name}>
-                      <summary className="cursor-pointer py-2 font-medium">
-                        {item.name}
-                      </summary>
-                      <p className="break-words text-sm">
-                        {item.members.join(", ") ||
-                          "Module-level callable; reference only."}
-                      </p>
-                    </details>
-                  ))}
+            <Button
+              variant="secondary"
+              disabled={busy}
+              onClick={() =>
+                execute(async () => setCatalog(await request("/catalog")))
+              }
+            >
+              Load API catalogue
+            </Button>
+            {catalog && (
+              <div className="mt-4">
+                <Input
+                  label={`Search API symbols (PyMuPDF ${catalog.version})`}
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+                <div className="mt-4 max-h-80 overflow-auto">
+                  {catalog.symbols
+                    .filter((item) =>
+                      `${item.name} ${item.members.join(" ")}`
+                        .toLowerCase()
+                        .includes(query.toLowerCase()),
+                    )
+                    .map((item) => (
+                      <details key={item.name}>
+                        <summary className="cursor-pointer py-2 font-medium">
+                          {item.name}
+                        </summary>
+                        <p className="break-words text-sm">
+                          {item.members.join(", ") ||
+                            "Module-level callable; reference only."}
+                        </p>
+                      </details>
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
-        </BodyCard>
+            )}
+          </BodyCard>
+        )}
       </div>
     </AppShell>
   );

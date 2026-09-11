@@ -44,6 +44,20 @@ def catalog():
     return library_catalog()
 
 
+@router.get('/pypdf/tools')
+def pypdf_tools(request: Request, response: Response):
+    from component.pymupdfService.pypdf_workbench import TOOLS as tools
+    owner(request, response)
+    return tools
+
+
+@router.get('/pypdf/checklist')
+def pypdf_checklist():
+    import json
+    from pathlib import Path
+    return json.loads((Path(__file__).parent.parent / 'component/pymupdfService/pypdf_checklist.json').read_text(encoding='utf-8'))
+
+
 @router.post("/files")
 def upload(request: Request, file: UploadFile = File(...), password: str = Form("")):
     mutation(request)
@@ -126,4 +140,19 @@ def run(tool: str, body: RunRequest, request: Request):
     result = store.save(session, name, data, mime)
     result["downloadUrl"] = f"/api/v1/pymupdf/files/{result['id']}/download"
     logger.info("pymupdf operation.succeeded")
+    return result
+
+
+@router.post('/pypdf/operations/{tool}')
+def run_pypdf(tool: str, body: RunRequest, request: Request):
+    from component.pymupdfService.pypdf_workbench import process
+    mutation(request)
+    session=owner(request)
+    paths=[(id,file_for(id,session)[1]) for id in body.file_ids]
+    try:
+        with lock: name,data,mime=process(tool,paths,body.options,body.passwords)
+    except (ValueError, TypeError, OverflowError) as exc: raise HTTPException(422,str(exc)) from None
+    except Exception: raise HTTPException(422,'pypdf operation failed. Check document and settings.') from None
+    result=store.save(session,name,data,mime)
+    result['downloadUrl']=f"/api/v1/pymupdf/files/{result['id']}/download"
     return result

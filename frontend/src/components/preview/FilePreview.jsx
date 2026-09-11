@@ -16,7 +16,9 @@ export function FilePreview({
     setLocal({ file, url: objectUrl });
     return () => URL.revokeObjectURL(objectUrl);
   }, [file, url]);
-  const source = url || (local?.file === file ? local.url : undefined);
+  // Server records have neither a local File nor a URL while rendering is pending.
+  // Optional chaining alone makes undefined === undefined true in that state.
+  const source = url || (local && local.file === file ? local.url : undefined);
   if (
     source &&
     [

@@ -33,12 +33,25 @@ def open_document(path, password=""):
 
 
 def page_indices(doc, value):
+    return parse_pages(value, doc.page_count)
+
+
+def parse_pages(value, count):
+    """Inclusive 1-based ranges and explicit order, bounded before expansion."""
     try:
-        pages = [int(x.strip()) - 1 for x in value.split(",")] if value.strip() else list(range(doc.page_count))
+        pages = []
+        for token in value.split(',') if value.strip() else [f'1-{count}']:
+            parts = token.strip().split('-')
+            if len(parts) == 1:
+                start = end = int(parts[0])
+            elif len(parts) == 2:
+                start, end = map(int, parts)
+            else: raise ValueError()
+            if not 1 <= start <= end <= count or len(pages) + end - start + 1 > 30:
+                raise ValueError()
+            pages.extend(range(start - 1, end))
     except (ValueError, AttributeError):
-        raise ValueError("Pages must be comma-separated 1-based numbers.") from None
-    if not pages or len(pages) > 30 or any(x < 0 or x >= doc.page_count for x in pages):
-        raise ValueError("Select 1–30 valid pages per operation.")
+        raise ValueError("Select up to 30 valid pages using 1-based numbers/ranges, e.g. 1-3,5,4.") from None
     return pages
 
 

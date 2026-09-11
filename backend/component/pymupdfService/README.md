@@ -26,7 +26,7 @@ Prefix `/api/v1/pymupdf`. First GET `/tools` to establish a local browser-sessio
 - POST `/operations/{tool}`: `{file_ids:[id],options:{...},passwords:{[id]:password}}`. Synchronous bounded operation, returns stored result and downloadUrl. Multiple outputs are zipped. Empty extraction returns an empty ZIP.
 - GET `/files/{id}/download`: session-scoped attachment response, never a client-provided storage path.
 
-Page numbers are 1-based. All options are allowlisted per operation. Literal comma-separated page order allows duplicates; blank means all, limited to 30 selected pages. Source uploads are immutable. The UI exposes a thumbnail reorder grid for documents with at most 30 pages, and page-number input for other selections.
+Page numbers are 1-based. All options are allowlisted per operation. Comma-separated pages and inclusive ranges (1-3,5,4) allow duplicates; blank means all, limited to 30 selected pages. Source uploads are immutable. The UI exposes a thumbnail reorder grid for documents with at most 30 pages, and page-number input for other selections.
 
 ## Implemented menu
 
@@ -56,3 +56,9 @@ cd backend
 ```
 
 Tests generate synthetic PDFs, exercise every menu operation, verify preview caching/session isolation, inspect reordered output, and reject invalid options/content. Fixtures and SQLite are isolated in temporary storage.
+
+## pypdf workbench
+
+`/previewpyPDF_V1` and `/previewV1` now open the connected pypdf workbench. Preview aliases for both engines are case-insensitive (including optional .html and trailing slash). The old component demo is still available by its direct examples/previewV1.html path.
+
+GET `/api/v1/pymupdf/pypdf/tools` lists pypdf tools and the explicitly labelled PyMuPDF-assisted conversions. POST `/api/v1/pymupdf/pypdf/operations/{tool}` uses the same request shape and shared immutable uploads as the PyMuPDF workbench. GET `/api/v1/pymupdf/pypdf/checklist` returns the 56-function audit from the supplied reference. See `frontend/src/components/pypdf/CHECKLIST.md` for test steps and missing/partial functionality. This adapter does not import or fix the legacy pypdfServices package.

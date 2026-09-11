@@ -1,0 +1,74 @@
+# pypdf Preview V1 verification checklist
+
+Generated from the user-supplied reference. Available means wired to the new workbench, not exhaustive validation. Missing items remain explicitly unimplemented. All UI page inputs use 1-based inclusive ranges; the pasted Python examples use 0-based indices.
+
+Open `/previewpyPDF_V1` (case-insensitive); `/previewV1` is an alias. Original component-only demo remains at `/src/components/examples/previewV1.html`.
+
+| Group          | Function                    | Status    | Tool                | Manual check                                                                                                                                        |
+| -------------- | --------------------------- | --------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| core.py        | merge_pdfs                  | Available | merge               | Upload two numbered PDFs. Select 1-2;2-3 and verify output order and count.                                                                         |
+| core.py        | split_pdf                   | Available | split               | Leave groups blank; expect one output per page.                                                                                                     |
+| core.py        | split_pdf_by_ranges         | Available | split               | Use 1-2;3-4 and inspect the two output PDFs.                                                                                                        |
+| core.py        | rotate_pages                | Available | rotate              | Choose page 2 and 90 degrees; only page 2 should rotate.                                                                                            |
+| core.py        | add_password                | Partial   | encrypt             | Download and reopen: a password must be required. Separate owner permissions are not exposed.                                                       |
+| core.py        | remove_password             | Available | decrypt             | Upload using its password; output should open without a password.                                                                                   |
+| core.py        | flatten_pdf                 | Assisted  | flatten             | PyMuPDF-assisted: verify fields/annotations are no longer interactive and remain visible.                                                           |
+| text.py        | extract_text                | Available | text                | Plain mode: compare text against a text-based PDF.                                                                                                  |
+| text.py        | extract_text_layout         | Available | text                | Layout mode: compare spacing against a multi-column PDF.                                                                                            |
+| text.py        | extract_text_by_orientation | Available | text                | Orientation mode: choose 90 and use rotated text.                                                                                                   |
+| text.py        | extract_text_from_pages     | Available | text                | Choose 2-3; JSON must identify only pages 2 and 3.                                                                                                  |
+| text.py        | extract_text_with_visitor   | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| images.py      | extract_images              | Available | images              | Verify extracted embedded image bytes; this is not a page screenshot.                                                                               |
+| images.py      | extract_images_from_page    | Available | images              | Select page 2; only its embedded images should be included.                                                                                         |
+| images.py      | get_image_info              | Available | image-info          | Check page number, image index, filename and size.                                                                                                  |
+| images.py      | check_image_on_page         | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_free_text               | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_rectangle               | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_ellipse                 | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_line                    | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_polygon                 | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_highlight               | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_text_annotation         | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_link                    | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | add_uri_link                | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| annotations.py | get_annotations             | Available | annotations         | Select one annotated page and inspect the JSON.                                                                                                     |
+| annotations.py | remove_annotations          | Available | remove-annotations  | Inspect output in a PDF viewer: all annotation types are removed.                                                                                   |
+| forms.py       | get_form_fields             | Available | fields              | Upload a fillable PDF and inspect field names and values.                                                                                           |
+| forms.py       | get_form_text_fields        | Partial   | fields              | Partial: full fields JSON is available; no text-only filter.                                                                                        |
+| forms.py       | fill_form                   | Available | fill                | Inspect fields, submit their names as JSON, and reopen output to verify values/appearance.                                                          |
+| forms.py       | get_field_info              | Partial   | fields              | Partial: inspect the named entry in the full fields JSON.                                                                                           |
+| metadata.py    | get_metadata                | Available | metadata            | Compare basic metadata with known title/author.                                                                                                     |
+| metadata.py    | get_xmp_metadata            | Partial   | metadata            | XMP is returned as raw XML, or null when absent.                                                                                                    |
+| metadata.py    | get_all_metadata            | Available | metadata            | Verify basic metadata plus XMP in one JSON.                                                                                                         |
+| pages.py       | scale_page                  | Partial   | scale               | Choose page 2, factor 0.5; verify dimensions. Target-width/height controls are not exposed.                                                         |
+| pages.py       | crop_page                   | Available | crop                | Choose a page and valid crop box; verify visible area and unchanged other pages.                                                                    |
+| pages.py       | transform_page              | Available | transform           | Change content rotation/scale/translation on page 2; inspect alignment.                                                                             |
+| pages.py       | merge_pages_overlay         | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| pages.py       | merge_pages_underlay        | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| pages.py       | remove_pages                | Available | remove              | Remove page 2; verify count and remaining order; removing all must fail.                                                                            |
+| pages.py       | insert_page                 | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| pages.py       | reorder_pages               | Available | select              | Load thumbnails, move page 3 before page 1, run, reopen and verify order.                                                                           |
+| attachments.py | extract_attachments         | Available | extract-attachments | Use a PDF with embedded files; compare downloaded bytes. Export filenames are generated.                                                            |
+| attachments.py | add_attachment              | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| attachments.py | get_attachment_list         | Available | attachments         | Check embedded names and counts.                                                                                                                    |
+| attachments.py | remove_attachments          | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| outlines.py    | get_outlines                | Available | outlines            | Inspect outline hierarchy in JSON.                                                                                                                  |
+| outlines.py    | add_outline                 | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| outlines.py    | add_nested_outline          | Missing   | —                   | Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete. |
+| outlines.py    | get_named_destinations      | Available | outlines            | Inspect destination entries in navigation JSON.                                                                                                     |
+| outlines.py    | get_page_labels             | Available | outlines            | Compare labels with a PDF using Roman numerals.                                                                                                     |
+| content.py     | get_content_stream          | Available | content             | Raw mode: select a page and inspect decoded stream text.                                                                                            |
+| content.py     | iterate_operations          | Partial   | content             | Operations mode: operands/operators returned; arbitrary callbacks are not accepted.                                                                 |
+| content.py     | extract_drawing_operators   | Available | content             | Drawing mode: only drawing operators should remain.                                                                                                 |
+| content.py     | extract_rectangles          | Available | content             | Rectangles mode: inspect re operands (raw coordinates, not a geometry reconstruction).                                                              |
+| content.py     | extract_lines               | Partial   | content             | Lines mode: inspect m/l operands; partial, does not return reconstructed line segments.                                                             |
+
+## Extra UI requirements
+
+- PDF to images: Conversion → PDF to images, pages `2-3`, PNG or JPG; verify exactly two output images. This uses PyMuPDF because pypdf does not rasterize pages.
+- Images to PDF: Conversion → Images to PDF; only JPEG/PNG uploads.
+- Reorder: Pages → Reorder / select individual pages → Load page thumbnails → Earlier/Later. Verify downloaded page contents, not only thumbnail positions.
+- Invalid page ranges (`0`, `9` for a four-page PDF, descending `3-1`) must fail; repeated pages (`2,2,1`) are allowed for duplication.
+- Local preview limits: 30 selected pages, 10 inputs, 20 MB/file. The thumbnail grid supports up to 30 source pages.
+- TIFF, OCR, HTML-to-PDF and ePub are not covered by this pypdf preview.
+- The new pypdf adapters use the existing local upload/preview storage on port 8001; they do not claim the legacy pypdfAPI endpoints are fixed or production-ready.

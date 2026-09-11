@@ -7,7 +7,7 @@ def field(key, label, kind="text", default="", choices=None):
     return dict(key=key, label=label, kind=kind, default=default, choices=choices)
 
 
-PAGES = field("pages", "Pages (1-based, e.g. 1,3,2; blank = all)")
+PAGES = field("pages", "Pages / ranges (1-based, e.g. 1-3,5,4; blank = all, max 30)")
 TEXT = field("text", "Text", default="Sample text")
 RECT = field("rect", "Rectangle x0,y0,x1,y1 (PDF points)", default="30,30,250,100")
 TOOLS = []

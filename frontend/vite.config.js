@@ -14,19 +14,19 @@ function previewRoute() {
     configureServer(server) {
       server.middlewares.use((req, _res, next) => {
         const url = new URL(req.url || "/", "http://localhost");
+        const previewPath = url.pathname
+          .toLowerCase()
+          .replace(/\/$/, "")
+          .replace(/\.html$/, "");
         if (
-          ["/previewV1", "/previewV1/", "/previewV1.html"].includes(
-            url.pathname,
+          ["/previewv1", "/previewpypdf_v1", "/preview_pypdf_v1"].includes(
+            previewPath,
           )
         ) {
-          req.url = `/src/components/examples/previewV1.html${url.search}`;
+          req.url = `/src/components/pypdf/previewpyPDF_V1.html${url.search}`;
         }
         if (
-          [
-            "/preview_pymupdf_V1",
-            "/preview_pymupdf_V1/",
-            "/preview_pymypdf_V1",
-          ].includes(url.pathname)
+          ["/preview_pymupdf_v1", "/preview_pymypdf_v1"].includes(previewPath)
         ) {
           req.url = `/src/components/pymupdf/preview_pymupdf_V1.html${url.search}`;
         }

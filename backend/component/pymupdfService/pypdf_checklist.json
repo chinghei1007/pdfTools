@@ -1,0 +1,394 @@
+[
+  {
+    "group": "core.py",
+    "function": "merge_pdfs",
+    "status": "Available",
+    "tool": "merge",
+    "check": "Upload two numbered PDFs. Select 1-2;2-3 and verify output order and count."
+  },
+  {
+    "group": "core.py",
+    "function": "split_pdf",
+    "status": "Available",
+    "tool": "split",
+    "check": "Leave groups blank; expect one output per page."
+  },
+  {
+    "group": "core.py",
+    "function": "split_pdf_by_ranges",
+    "status": "Available",
+    "tool": "split",
+    "check": "Use 1-2;3-4 and inspect the two output PDFs."
+  },
+  {
+    "group": "core.py",
+    "function": "rotate_pages",
+    "status": "Available",
+    "tool": "rotate",
+    "check": "Choose page 2 and 90 degrees; only page 2 should rotate."
+  },
+  {
+    "group": "core.py",
+    "function": "add_password",
+    "status": "Partial",
+    "tool": "encrypt",
+    "check": "Download and reopen: a password must be required. Separate owner permissions are not exposed."
+  },
+  {
+    "group": "core.py",
+    "function": "remove_password",
+    "status": "Available",
+    "tool": "decrypt",
+    "check": "Upload using its password; output should open without a password."
+  },
+  {
+    "group": "core.py",
+    "function": "flatten_pdf",
+    "status": "Assisted",
+    "tool": "flatten",
+    "check": "PyMuPDF-assisted: verify fields/annotations are no longer interactive and remain visible."
+  },
+  {
+    "group": "text.py",
+    "function": "extract_text",
+    "status": "Available",
+    "tool": "text",
+    "check": "Plain mode: compare text against a text-based PDF."
+  },
+  {
+    "group": "text.py",
+    "function": "extract_text_layout",
+    "status": "Available",
+    "tool": "text",
+    "check": "Layout mode: compare spacing against a multi-column PDF."
+  },
+  {
+    "group": "text.py",
+    "function": "extract_text_by_orientation",
+    "status": "Available",
+    "tool": "text",
+    "check": "Orientation mode: choose 90 and use rotated text."
+  },
+  {
+    "group": "text.py",
+    "function": "extract_text_from_pages",
+    "status": "Available",
+    "tool": "text",
+    "check": "Choose 2-3; JSON must identify only pages 2 and 3."
+  },
+  {
+    "group": "text.py",
+    "function": "extract_text_with_visitor",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "images.py",
+    "function": "extract_images",
+    "status": "Available",
+    "tool": "images",
+    "check": "Verify extracted embedded image bytes; this is not a page screenshot."
+  },
+  {
+    "group": "images.py",
+    "function": "extract_images_from_page",
+    "status": "Available",
+    "tool": "images",
+    "check": "Select page 2; only its embedded images should be included."
+  },
+  {
+    "group": "images.py",
+    "function": "get_image_info",
+    "status": "Available",
+    "tool": "image-info",
+    "check": "Check page number, image index, filename and size."
+  },
+  {
+    "group": "images.py",
+    "function": "check_image_on_page",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_free_text",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_rectangle",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_ellipse",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_line",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_polygon",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_highlight",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_text_annotation",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_link",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "add_uri_link",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "annotations.py",
+    "function": "get_annotations",
+    "status": "Available",
+    "tool": "annotations",
+    "check": "Select one annotated page and inspect the JSON."
+  },
+  {
+    "group": "annotations.py",
+    "function": "remove_annotations",
+    "status": "Available",
+    "tool": "remove-annotations",
+    "check": "Inspect output in a PDF viewer: all annotation types are removed."
+  },
+  {
+    "group": "forms.py",
+    "function": "get_form_fields",
+    "status": "Available",
+    "tool": "fields",
+    "check": "Upload a fillable PDF and inspect field names and values."
+  },
+  {
+    "group": "forms.py",
+    "function": "get_form_text_fields",
+    "status": "Partial",
+    "tool": "fields",
+    "check": "Partial: full fields JSON is available; no text-only filter."
+  },
+  {
+    "group": "forms.py",
+    "function": "fill_form",
+    "status": "Available",
+    "tool": "fill",
+    "check": "Inspect fields, submit their names as JSON, and reopen output to verify values/appearance."
+  },
+  {
+    "group": "forms.py",
+    "function": "get_field_info",
+    "status": "Partial",
+    "tool": "fields",
+    "check": "Partial: inspect the named entry in the full fields JSON."
+  },
+  {
+    "group": "metadata.py",
+    "function": "get_metadata",
+    "status": "Available",
+    "tool": "metadata",
+    "check": "Compare basic metadata with known title/author."
+  },
+  {
+    "group": "metadata.py",
+    "function": "get_xmp_metadata",
+    "status": "Partial",
+    "tool": "metadata",
+    "check": "XMP is returned as raw XML, or null when absent."
+  },
+  {
+    "group": "metadata.py",
+    "function": "get_all_metadata",
+    "status": "Available",
+    "tool": "metadata",
+    "check": "Verify basic metadata plus XMP in one JSON."
+  },
+  {
+    "group": "pages.py",
+    "function": "scale_page",
+    "status": "Partial",
+    "tool": "scale",
+    "check": "Choose page 2, factor 0.5; verify dimensions. Target-width/height controls are not exposed."
+  },
+  {
+    "group": "pages.py",
+    "function": "crop_page",
+    "status": "Available",
+    "tool": "crop",
+    "check": "Choose a page and valid crop box; verify visible area and unchanged other pages."
+  },
+  {
+    "group": "pages.py",
+    "function": "transform_page",
+    "status": "Available",
+    "tool": "transform",
+    "check": "Change content rotation/scale/translation on page 2; inspect alignment."
+  },
+  {
+    "group": "pages.py",
+    "function": "merge_pages_overlay",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "pages.py",
+    "function": "merge_pages_underlay",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "pages.py",
+    "function": "remove_pages",
+    "status": "Available",
+    "tool": "remove",
+    "check": "Remove page 2; verify count and remaining order; removing all must fail."
+  },
+  {
+    "group": "pages.py",
+    "function": "insert_page",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "pages.py",
+    "function": "reorder_pages",
+    "status": "Available",
+    "tool": "select",
+    "check": "Load thumbnails, move page 3 before page 1, run, reopen and verify order."
+  },
+  {
+    "group": "attachments.py",
+    "function": "extract_attachments",
+    "status": "Available",
+    "tool": "extract-attachments",
+    "check": "Use a PDF with embedded files; compare downloaded bytes. Export filenames are generated."
+  },
+  {
+    "group": "attachments.py",
+    "function": "add_attachment",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "attachments.py",
+    "function": "get_attachment_list",
+    "status": "Available",
+    "tool": "attachments",
+    "check": "Check embedded names and counts."
+  },
+  {
+    "group": "attachments.py",
+    "function": "remove_attachments",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "outlines.py",
+    "function": "get_outlines",
+    "status": "Available",
+    "tool": "outlines",
+    "check": "Inspect outline hierarchy in JSON."
+  },
+  {
+    "group": "outlines.py",
+    "function": "add_outline",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "outlines.py",
+    "function": "add_nested_outline",
+    "status": "Missing",
+    "tool": null,
+    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+  },
+  {
+    "group": "outlines.py",
+    "function": "get_named_destinations",
+    "status": "Available",
+    "tool": "outlines",
+    "check": "Inspect destination entries in navigation JSON."
+  },
+  {
+    "group": "outlines.py",
+    "function": "get_page_labels",
+    "status": "Available",
+    "tool": "outlines",
+    "check": "Compare labels with a PDF using Roman numerals."
+  },
+  {
+    "group": "content.py",
+    "function": "get_content_stream",
+    "status": "Available",
+    "tool": "content",
+    "check": "Raw mode: select a page and inspect decoded stream text."
+  },
+  {
+    "group": "content.py",
+    "function": "iterate_operations",
+    "status": "Partial",
+    "tool": "content",
+    "check": "Operations mode: operands/operators returned; arbitrary callbacks are not accepted."
+  },
+  {
+    "group": "content.py",
+    "function": "extract_drawing_operators",
+    "status": "Available",
+    "tool": "content",
+    "check": "Drawing mode: only drawing operators should remain."
+  },
+  {
+    "group": "content.py",
+    "function": "extract_rectangles",
+    "status": "Available",
+    "tool": "content",
+    "check": "Rectangles mode: inspect re operands (raw coordinates, not a geometry reconstruction)."
+  },
+  {
+    "group": "content.py",
+    "function": "extract_lines",
+    "status": "Partial",
+    "tool": "content",
+    "check": "Lines mode: inspect m/l operands; partial, does not return reconstructed line segments."
+  }
+]

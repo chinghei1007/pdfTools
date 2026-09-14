@@ -1,6 +1,8 @@
 export const inputTypes = {
   image: '.jpg,.jpeg,.png,image/jpeg,image/png',
   pdf: '.pdf,application/pdf',
+  html: '.html,.htm,text/html',
+  any: '.pdf,.jpg,.jpeg,.png,.html,.htm,application/pdf,image/jpeg,image/png,text/html',
 };
 
 export function validate(
@@ -33,8 +35,13 @@ export function validate(
             : mediaType === pattern,
       );
     // Reject contradictory MIME/extension pairs as well as wrong categories.
-    const mime = type === 'pdf' ? ['application/pdf'] : ['image/jpeg', 'image/png'];
-    const extension = type === 'pdf' ? /\.pdf$/i : /\.(jpe?g|png)$/i;
+    const categories = {
+      pdf: { mime: ['application/pdf'], extension: /\.pdf$/i },
+      image: { mime: ['image/jpeg', 'image/png'], extension: /\.(jpe?g|png)$/i },
+      html: { mime: ['text/html'], extension: /\.html?$/i },
+      any: { mime: ['application/pdf', 'image/jpeg', 'image/png', 'text/html'], extension: /\.(pdf|jpe?g|png|html?)$/i },
+    };
+    const { mime, extension } = categories[type] || { mime: [], extension: /.*/ };
     const matchesCategory = !type || (extension.test(file.name) && (!file.type || mime.includes(file.type.toLowerCase())));
     if (!validType || !matchesCategory) reject(file, 'unsupported_type', 'unsupported file type.');
     else if (file.size === 0) reject(file, 'zero_bytes', 'the browser received 0 bytes. If this file is not empty, save/download it to a local folder, then use Browse files.');

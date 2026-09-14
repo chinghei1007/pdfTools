@@ -24,9 +24,16 @@ export function Dropdown({
   return (
     <div
       ref={root}
-      className="relative inline-block text-left"
+      className="pdf-dropdown"
       onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+        // Opening browser DevTools reports no next DOM focus target. Keep the
+        // disclosure mounted so its styles can be inspected; real keyboard
+        // focus moves still provide relatedTarget and dismiss normally.
+        if (
+          event.relatedTarget &&
+          !event.currentTarget.contains(event.relatedTarget)
+        )
+          setOpen(false);
       }}
       onKeyDown={(event) => {
         if (event.key === "Escape") {
@@ -48,13 +55,13 @@ export function Dropdown({
       {open && !disabled && (
         <div
           id={id}
-          className="absolute right-0 z-20 mt-2 min-w-48 rounded-xl border border-solid border-slate-200 bg-white p-2 shadow-lg"
+          className="pdf-dropdown__menu"
         >
           {items.map((item) => (
             <Button
               key={item.id}
               variant={value === item.id ? "secondary" : "ghost"}
-              className="w-full justify-start"
+              className="pdf-dropdown__item"
               disabled={item.disabled}
               aria-pressed={value === item.id}
               onClick={() => {

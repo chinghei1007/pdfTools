@@ -4,10 +4,10 @@ import { ProcessingStatus } from "@components/status/ProcessingStatus";
 
 export function ToolHeader({ title, description }) {
   return (
-    <header>
-      <h1 className="m-0 text-2xl font-bold text-slate-900">{title}</h1>
+    <header className="pdf-workspace__header">
+      <h1 className="pdf-workspace__title">{title}</h1>
       {description && (
-        <p className="mt-2 text-sm text-slate-600">{description}</p>
+        <p className="pdf-workspace__description">{description}</p>
       )}
     </header>
   );
@@ -17,9 +17,9 @@ export function ToolOptions({ children, disabled = false }) {
   return (
     <fieldset
       disabled={disabled}
-      className="m-0 flex min-w-0 flex-col gap-4 border-0 p-0"
+      className="pdf-settings pdf-settings--stacked"
     >
-      <legend className="mb-4 text-base font-semibold">Settings</legend>
+      <legend>Settings</legend>
       {children}
     </fieldset>
   );
@@ -41,7 +41,7 @@ export function ToolWorkspace({
 }) {
   const busy = ["reading", "queued", "running"].includes(status);
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+    <div className="pdf-workspace">
       <ToolHeader title={title} description={description} />
       {upload && <BodyCard title="Upload files">{upload}</BodyCard>}
       {preview && <BodyCard title="Upload preview">{preview}</BodyCard>}
@@ -50,13 +50,13 @@ export function ToolWorkspace({
           <ToolOptions disabled={busy}>{settings}</ToolOptions>
         </BodyCard>
       )}
-      <div className="flex flex-col gap-4">
+      <div className="pdf-workspace__status">
         <ProcessingStatus
           status={status}
           progress={progress}
           message={message}
         />
-        <div>
+        <div className="pdf-workspace__actions">
           <Button disabled={!canRun || !onRun} loading={busy} onClick={onRun}>
             {actionLabel}
           </Button>

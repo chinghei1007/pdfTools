@@ -81,5 +81,17 @@ class ServiceTest(unittest.TestCase):
             self.assertTrue(doc.authenticate('example-password'))
             self.assertIn('First', doc[0].get_text())
 
+    def test_app_watermark_is_detected_and_removed_exactly(self):
+        added = self.run_tool('watermark', options={'pages': '1', 'text': 'PRIVATE'})
+        self.assertEqual(added.status_code, 200, added.text)
+        marked_id = added.json()['id']
+        detected = self.run_tool('remove-watermark', [marked_id], {'pages': '1', 'mode': 'detect'})
+        self.assertEqual(detected.status_code, 200, detected.text)
+        self.assertIn(b'app-managed', self.client.get(detected.json()['downloadUrl']).content)
+        removed = self.run_tool('remove-watermark', [marked_id], {'pages': '1', 'mode': 'remove-app'})
+        self.assertEqual(removed.status_code, 200, removed.text)
+        with pymupdf.open(stream=self.client.get(removed.json()['downloadUrl']).content, filetype='pdf') as document:
+            self.assertEqual(list(document[0].annots() or []), [])
+
 
 if __name__ == '__main__': unittest.main()

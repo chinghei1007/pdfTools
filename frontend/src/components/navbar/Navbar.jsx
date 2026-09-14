@@ -9,22 +9,28 @@ export function Navbar({
   onHistory,
   onAccount,
   accountLabel = "Log in",
+  engineSwitch,
+  themeControl,
+  busy = false,
 }) {
   return (
-    <header className="sticky top-0 z-10 flex flex-wrap items-center gap-3 border-b border-solid border-slate-200 bg-white px-5 py-4">
-      <span className="mr-auto text-lg font-bold">{brand}</span>
-      <Button variant="secondary" onClick={onHistory} disabled={!onHistory}>
-        History
-      </Button>
-      <Button variant="ghost" onClick={onAccount} disabled={!onAccount}>
-        {accountLabel}
-      </Button>
+    <header className="pdf-navbar">
+      <span className="pdf-navbar__brand">{brand}</span>
+      {engineSwitch}
+      {onHistory && (
+        <Button variant="secondary" onClick={onHistory}>
+          History
+        </Button>
+      )}
+      {themeControl}
+      {onAccount && <Button variant="ghost" onClick={onAccount}>{accountLabel}</Button>}
       {categories.length > 0 && (
         <Dropdown
           label="Menu"
           items={categories}
           value={categoryId}
           onSelect={onCategoryChange}
+          disabled={busy}
         />
       )}
     </header>

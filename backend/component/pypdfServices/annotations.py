@@ -8,7 +8,7 @@ from pypdf.annotations import (
     FreeText, Rectangle, Ellipse, Line,
     Polygon, PolyLine, Highlight, Text, Link, Popup
 )
-from pypdf.generic import RectangleObject
+from pypdf.generic import ArrayObject, FloatObject, RectangleObject
 from typing import List, Optional, Tuple, Union
 import os
 import sys
@@ -168,15 +168,7 @@ def add_polygon(
     writer = PdfWriter()
     writer.append(input_path)
     
-    # Calculate bounding rect
-    x_coords = [v[0] for v in vertices]
-    y_coords = [v[1] for v in vertices]
-    rect = (min(x_coords), min(y_coords), max(x_coords), max(y_coords))
-    
-    annotation = Polygon(
-        vertices=vertices,
-        rect=RectangleObject(rect)
-    )
+    annotation = Polygon(vertices=vertices)
     
     writer.add_annotation(page_number=page_number, annotation=annotation)
     
@@ -201,7 +193,9 @@ def add_highlight(
     
     # QuadPoints define the highlighted area (4 corners)
     x1, y1, x2, y2 = rect
-    quad_points = [x1, y2, x2, y2, x1, y1, x2, y1]
+    quad_points = ArrayObject(
+        [FloatObject(value) for value in (x1, y2, x2, y2, x1, y1, x2, y1)]
+    )
     
     annotation = Highlight(
         rect=RectangleObject(rect),

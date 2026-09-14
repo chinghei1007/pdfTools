@@ -46,25 +46,25 @@ export function Dialog({
             onClose();
         }
       }}
-      className="pdf-ui w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl border-0 bg-white p-0 text-slate-900 shadow-xl backdrop:bg-slate-950/50"
+      className="pdf-dialog"
     >
-      <div className="p-6 text-left">
-        <header className="flex items-start justify-between gap-4">
+      <div className="pdf-dialog__inner">
+        <header className="pdf-dialog__header">
           <div>
-            <h2 id={titleId} className="m-0 text-xl font-semibold">
+            <h2 id={titleId} className="pdf-dialog__title">
               {title}
             </h2>
             {description && (
-              <p id={descriptionId} className="mt-2 text-sm text-slate-600">
+              <p id={descriptionId} className="pdf-dialog__description">
                 {description}
               </p>
             )}
           </div>
           <CloseButton onClick={onClose} />
         </header>
-        <div className="mt-5">{open && children}</div>
+        <div className="pdf-dialog__content">{open && children}</div>
         {footer && (
-          <footer className="mt-5 flex justify-end gap-2">{footer}</footer>
+          <footer className="pdf-dialog__footer">{footer}</footer>
         )}
       </div>
     </dialog>

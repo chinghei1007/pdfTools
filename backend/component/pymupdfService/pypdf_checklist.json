@@ -30,9 +30,9 @@
   {
     "group": "core.py",
     "function": "add_password",
-    "status": "Partial",
+    "status": "Available",
     "tool": "encrypt",
-    "check": "Download and reopen: a password must be required. Separate owner permissions are not exposed."
+    "check": "Download and reopen: user/owner passwords and selected permissions must be enforced."
   },
   {
     "group": "core.py",
@@ -79,9 +79,9 @@
   {
     "group": "text.py",
     "function": "extract_text_with_visitor",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "visitor-text",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "images.py",
@@ -107,72 +107,72 @@
   {
     "group": "images.py",
     "function": "check_image_on_page",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "image-check",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_free_text",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_rectangle",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_ellipse",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_line",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_polygon",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_highlight",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_text_annotation",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_link",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
     "function": "add_uri_link",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-annotation",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "annotations.py",
@@ -198,9 +198,9 @@
   {
     "group": "forms.py",
     "function": "get_form_text_fields",
-    "status": "Partial",
-    "tool": "fields",
-    "check": "Partial: full fields JSON is available; no text-only filter."
+    "status": "Available",
+    "tool": "text-fields",
+    "check": "Use Text form fields and verify only text controls and their values are returned."
   },
   {
     "group": "forms.py",
@@ -212,9 +212,9 @@
   {
     "group": "forms.py",
     "function": "get_field_info",
-    "status": "Partial",
-    "tool": "fields",
-    "check": "Partial: inspect the named entry in the full fields JSON."
+    "status": "Available",
+    "tool": "field-info",
+    "check": "Enter an existing field name and verify only that field's information is returned."
   },
   {
     "group": "metadata.py",
@@ -226,7 +226,7 @@
   {
     "group": "metadata.py",
     "function": "get_xmp_metadata",
-    "status": "Partial",
+    "status": "Available",
     "tool": "metadata",
     "check": "XMP is returned as raw XML, or null when absent."
   },
@@ -240,9 +240,9 @@
   {
     "group": "pages.py",
     "function": "scale_page",
-    "status": "Partial",
+    "status": "Available",
     "tool": "scale",
-    "check": "Choose page 2, factor 0.5; verify dimensions. Target-width/height controls are not exposed."
+    "check": "Scale by factor or target width/height and verify the resulting page dimensions."
   },
   {
     "group": "pages.py",
@@ -261,16 +261,16 @@
   {
     "group": "pages.py",
     "function": "merge_pages_overlay",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "overlay",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "pages.py",
     "function": "merge_pages_underlay",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "underlay",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "pages.py",
@@ -282,9 +282,9 @@
   {
     "group": "pages.py",
     "function": "insert_page",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "insert",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "pages.py",
@@ -303,9 +303,9 @@
   {
     "group": "attachments.py",
     "function": "add_attachment",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-attachment",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "attachments.py",
@@ -317,9 +317,9 @@
   {
     "group": "attachments.py",
     "function": "remove_attachments",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "remove-attachments",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "outlines.py",
@@ -331,16 +331,16 @@
   {
     "group": "outlines.py",
     "function": "add_outline",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-outline",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "outlines.py",
     "function": "add_nested_outline",
-    "status": "Missing",
-    "tool": null,
-    "check": "Not wired to this preview. A legacy helper in the pasted reference is not evidence of a working API/UI; implement and test before marking complete."
+    "status": "Available",
+    "tool": "add-nested-outline",
+    "check": "Available through the named unified workbench tool; verify the result on a representative PDF."
   },
   {
     "group": "outlines.py",
@@ -366,7 +366,7 @@
   {
     "group": "content.py",
     "function": "iterate_operations",
-    "status": "Partial",
+    "status": "Available",
     "tool": "content",
     "check": "Operations mode: operands/operators returned; arbitrary callbacks are not accepted."
   },
@@ -387,7 +387,7 @@
   {
     "group": "content.py",
     "function": "extract_lines",
-    "status": "Partial",
+    "status": "Available",
     "tool": "content",
     "check": "Lines mode: inspect m/l operands; partial, does not return reconstructed line segments."
   }

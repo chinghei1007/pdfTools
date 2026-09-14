@@ -33,7 +33,7 @@ export function FilePreview({
       <img
         src={source}
         alt={`Preview of ${name}`}
-        className="block h-40 w-full rounded-lg bg-slate-100 object-contain"
+        className="pdf-file-preview__image"
       />
     );
   if (source && mediaType === "application/pdf" && renderPdf)
@@ -42,16 +42,16 @@ export function FilePreview({
         data={source}
         type="application/pdf"
         aria-label={`Preview of ${name}`}
-        className="h-96 w-full"
+        className="pdf-file-preview__document"
       >
-        <p className="text-sm text-slate-600">
+        <p className="pdf-muted">
           Inline PDF preview is unavailable. Use the download action to open the
           file.
         </p>
       </object>
     );
   return (
-    <div className="flex h-32 items-center justify-center rounded-lg bg-slate-100 text-sm font-semibold text-slate-600">
+    <div className="pdf-file-preview__fallback">
       {mediaType === "application/pdf" ? "PDF document" : "Preview unavailable"}
     </div>
   );

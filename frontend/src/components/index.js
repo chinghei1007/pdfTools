@@ -10,6 +10,8 @@ export {
   SidebarGroup,
 } from "@components/sidebar/Sidebar";
 export { Navbar } from "@components/navbar/Navbar";
+export { EngineSwitch } from "@components/navbar/EngineSwitch";
+export { ThemeControl } from "@components/navbar/ThemeControl";
 export { AppShell } from "@components/layout/AppShell";
 export { BodyCard } from "@components/cards/BodyCard";
 export { FileDropzone } from "@components/upload/FileDropzone";
@@ -21,6 +23,7 @@ export {
   FileProgress,
 } from "@components/status/ProcessingStatus";
 export { HistoryDialog } from "@components/history/HistoryDialog";
+export { ApiCheckPage } from "@components/api/ApiCheckPage";
 export { LoginDialog } from "@components/auth/LoginDialog";
 export {
   ToolWorkspace,

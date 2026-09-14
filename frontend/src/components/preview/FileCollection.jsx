@@ -7,17 +7,17 @@ import { cx, formatBytes } from "@components/utils";
 export function FileItem({ entry, onRemove, actions }) {
   const name = entry.name || entry.file?.name || "Untitled file";
   return (
-    <article className="min-w-0 rounded-xl border border-solid border-slate-200 bg-white p-3">
+    <article className="pdf-file-item">
       <FilePreview
         file={entry.file}
         url={entry.url}
         name={name}
         mediaType={entry.mediaType || entry.file?.type}
       />
-      <div className="mt-3 flex items-start gap-2">
-        <div className="min-w-0 flex-1">
-          <p className="m-0 break-all text-sm font-medium">{name}</p>
-          <p className="mt-1 text-xs text-slate-600">
+      <div className="pdf-file-item__details">
+        <div className="pdf-file-item__text">
+          <p className="pdf-file-item__name">{name}</p>
+          <p className="pdf-file-item__size">
             {formatBytes(entry.size ?? entry.file?.size ?? 0)}
           </p>
         </div>
@@ -34,11 +34,11 @@ export function FileItem({ entry, onRemove, actions }) {
         <FileProgress value={entry.progress} label="Reading file" />
       )}
       {entry.error && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="pdf-error">
           {entry.error}
         </p>
       )}
-      {actions && <div className="mt-3 flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="pdf-file-item__actions">{actions}</div>}
     </article>
   );
 }
@@ -51,10 +51,10 @@ export function FileCollection({
   onReorder,
 }) {
   return (
-    <div>
+    <div className="pdf-file-collection">
       {onViewChange && (
         <div
-          className="mb-3 flex justify-end gap-2"
+          className="pdf-file-collection__view"
           role="group"
           aria-label="Preview layout"
         >
@@ -72,12 +72,12 @@ export function FileCollection({
         </div>
       )}
       {!files.length ? (
-        <p className="text-sm text-slate-600">No files selected.</p>
+        <p className="pdf-muted">No files selected.</p>
       ) : (
         <div
           className={cx(
-            "grid gap-3",
-            view === "grid" && "sm:grid-cols-2 lg:grid-cols-3",
+            "pdf-file-collection__items",
+            view === "grid" && "pdf-file-collection__items--grid",
           )}
         >
           {files.map((entry, index) => (

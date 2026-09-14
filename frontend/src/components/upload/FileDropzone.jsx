@@ -43,7 +43,7 @@ export function FileDropzone({
     if (result.accepted.length) onFilesSelected?.(result.accepted);
   };
   return (
-    <div>
+    <div className="pdf-upload">
       <div
         onDragOver={(event) => {
           event.preventDefault();
@@ -67,14 +67,12 @@ export function FileDropzone({
           select(event.dataTransfer.files, 'drop');
         }}
         className={cx(
-          "rounded-xl border-2 border-dashed p-8 text-center",
-          dragging && !disabled
-            ? "border-blue-600 bg-blue-50"
-            : "border-slate-300 bg-slate-50",
-          disabled && "opacity-50",
+          "pdf-upload__dropzone",
+          dragging && !disabled && "pdf-upload__dropzone--dragging",
+          disabled && "pdf-upload__dropzone--disabled",
         )}
       >
-        <p className="m-0 mb-3 font-medium text-slate-800">{label}</p>
+        <p className="pdf-upload__label">{label}</p>
         <Button
           variant="secondary"
           disabled={disabled}
@@ -86,7 +84,7 @@ export function FileDropzone({
         <input
           ref={input}
           type="file"
-          className="hidden"
+          className="pdf-visually-hidden"
           accept={inputTypes[type] || accept}
           multiple={multiple}
           disabled={disabled}
@@ -95,13 +93,13 @@ export function FileDropzone({
             event.target.value = "";
           }}
         />
-        <p id={hintId} className="mt-3 text-xs text-slate-600">
+        <p id={hintId} className="pdf-upload__hint">
           {hint ||
             `${inputTypes[type] || accept || "All file types"}${maxSizeBytes ? ` · Up to ${formatBytes(maxSizeBytes)} per file` : ""}`}
         </p>
       </div>
       {errors.length > 0 && (
-        <ul role="alert" className="text-sm text-red-700">
+        <ul role="alert" className="pdf-upload__errors">
           {errors.map((error, index) => (
             <li key={`${index}-${error}`}>{error}</li>
           ))}

@@ -8,7 +8,7 @@ function LoginForm({ onSubmit, loading, error, onRegister, onForgotPassword }) {
   const [password, setPassword] = useState("");
   return (
     <form
-      className="flex flex-col gap-4"
+      className="pdf-login"
       onSubmit={(event) => {
         event.preventDefault();
         if (!loading && onSubmit)
@@ -35,7 +35,7 @@ function LoginForm({ onSubmit, loading, error, onRegister, onForgotPassword }) {
         disabled={loading}
       />
       {error && (
-        <p role="alert" className="m-0 text-sm text-red-700">
+        <p role="alert" className="pdf-error">
           {error}
         </p>
       )}
@@ -46,7 +46,7 @@ function LoginForm({ onSubmit, loading, error, onRegister, onForgotPassword }) {
       >
         Log in
       </Button>
-      <div className="flex flex-wrap justify-between gap-2">
+      <div className="pdf-login__links">
         {onForgotPassword && (
           <Button variant="ghost" onClick={onForgotPassword}>
             Forgot password?

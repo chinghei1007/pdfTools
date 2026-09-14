@@ -1,5 +1,6 @@
 """Allowlisted, bounded document operations. Page numbers in APIs are 1-based."""
 import io
+import html
 import json
 import zipfile
 from contextlib import ExitStack
@@ -89,6 +90,28 @@ def process(tool_id, paths, options, passwords):
     for key, f in allowed.items():
         if f["choices"] and opts[key] not in f["choices"]:
             raise ValueError(f"Invalid {key}.")
+    if tool_id == "html-to-pdf":
+        if len(paths) > 1:
+            raise ValueError("Provide one HTML file or pasted HTML, not both.")
+        source = str(opts.get("html", "")).strip()
+        if paths:
+            if source:
+                raise ValueError("Use either an HTML file or pasted HTML, not both.")
+            source = paths[0][1].read_text(encoding="utf-8", errors="replace")
+        if not source:
+            raise ValueError("Upload an HTML file or paste HTML content.")
+        try:
+            from playwright.sync_api import sync_playwright
+            with sync_playwright() as runtime:
+                browser = runtime.chromium.launch(headless=True)
+                page = browser.new_page()
+                page.route("**/*", lambda route: route.abort() if route.request.url.startswith(("http://", "https://")) else route.continue_())
+                page.set_content(source, wait_until="domcontentloaded")
+                result = page.pdf(print_background=True, format="A4")
+                browser.close()
+        except Exception as exc:
+            raise ValueError("HTML rendering is unavailable. Install the Playwright Chromium browser.") from exc
+        return "document.pdf", result, "application/pdf"
     if not paths or len(paths) > 10 or (not tool["multiple"] and len(paths) != 1):
         raise ValueError("Invalid number of input files.")
     with ExitStack() as stack:
@@ -109,6 +132,52 @@ def process(tool_id, paths, options, passwords):
             return "combined.pdf", out.tobytes(garbage=4, deflate=True), "application/pdf"
         indices = page_indices(doc, opts.get("pages", "")) if "pages" in allowed else []
         pages = [doc[i] for i in indices]
+        if tool_id == "ocr":
+            language = str(opts["language"]).strip() or "eng"
+            if not re_language(language):
+                raise ValueError("Use installed Tesseract language codes such as eng or eng+deu.")
+            if opts["format"] == "text":
+                extracted = []
+                for index, page in zip(indices, pages):
+                    existing = page.get_text()
+                    if existing.strip():
+                        value = existing
+                    else:
+                        text_page = page.get_textpage_ocr(language=language, full=True)
+                        value = page.get_text(textpage=text_page)
+                    extracted.append(f"--- Page {index + 1} ---\n{value}")
+                return "ocr.txt", "\n\n".join(extracted).encode(), "text/plain"
+            output = stack.enter_context(pymupdf.open())
+            for page in pages:
+                if page.get_text().strip():
+                    output.insert_pdf(doc, from_page=page.number, to_page=page.number)
+                else:
+                    rendered = page.get_pixmap(dpi=150, alpha=False).pdfocr_tobytes(language=language)
+                    part = stack.enter_context(pymupdf.open("pdf", rendered))
+                    output.insert_pdf(part)
+            return "searchable.pdf", output.tobytes(garbage=4, deflate=True), "application/pdf"
+        if tool_id == "pdf-to-epub":
+            try:
+                from ebooklib import epub
+            except ImportError as exc:
+                raise ValueError("EPUB export requires EbookLib.") from exc
+            book = epub.EpubBook()
+            book.set_identifier("pdf-toolkit-export")
+            book.set_title(doc.metadata.get("title") or "PDF export")
+            book.set_language("en")
+            chapters = []
+            for position, (index, page) in enumerate(zip(indices, pages), 1):
+                chapter = epub.EpubHtml(title=f"Page {index + 1}", file_name=f"page-{position}.xhtml", lang="en")
+                chapter.content = f"<h1>Page {index + 1}</h1><pre>{html.escape(page.get_text())}</pre>"
+                book.add_item(chapter)
+                chapters.append(chapter)
+            book.toc = tuple(chapters)
+            book.spine = ["nav", *chapters]
+            book.add_item(epub.EpubNcx())
+            book.add_item(epub.EpubNav())
+            target = io.BytesIO()
+            epub.write_epub(target, book)
+            return "document.epub", target.getvalue(), "application/epub+zip"
         if tool_id in ("render", "svg", "text", "split"):
             items = []
             for index, page in zip(indices, pages):
@@ -116,7 +185,7 @@ def process(tool_id, paths, options, passwords):
                 if tool_id == "render":
                     dpi = int(opts["dpi"])
                     if not 36 <= dpi <= 300 or page.rect.width * page.rect.height * (dpi / 72) ** 2 > 12_000_000:
-                        raise ValueError("DPI must be 36–144; rendered page must be under 12 megapixels.")
+                        raise ValueError("DPI must be 36–300; rendered page must be under 12 megapixels.")
                     fmt = opts["format"]
                     items.append((f"{name}.{fmt}", page.get_pixmap(dpi=dpi, alpha=False).tobytes("jpeg" if fmt == "jpg" else fmt), "image/jpeg" if fmt == "jpg" else "image/png"))
                 elif tool_id == "svg":
@@ -153,6 +222,19 @@ def process(tool_id, paths, options, passwords):
                 elif tool_id == "drawings": value = page.get_drawings()
                 else: value = [list(r) for r in page.search_for(str(opts["text"]))]
                 data.append(dict(page=index + 1, result=value))
+        if tool_id == "remove-watermark" and opts["mode"] == "detect":
+            candidates = []
+            for index, page in zip(indices, pages):
+                app_marks = [a for a in (page.annots() or []) if a.info.get("subject") == "pdf-toolkit-watermark"]
+                if app_marks:
+                    candidates.append(dict(page=index + 1, type="app-managed", count=len(app_marks), reliablyRemovable=True))
+                if page.get_text().strip():
+                    candidates.append(dict(page=index + 1, type="text", reliablyRemovable=False))
+                if page.get_images():
+                    candidates.append(dict(page=index + 1, type="image", reliablyRemovable=False))
+                if page.get_drawings():
+                    candidates.append(dict(page=index + 1, type="vector/SVG-like", reliablyRemovable=False))
+            return "watermark-detection.json", json_bytes(candidates), "application/json"
         if data is not None:
             return f"{tool_id}.json", json_bytes(data), "application/json"
         if tool_id == "select": doc.select(indices)
@@ -161,7 +243,28 @@ def process(tool_id, paths, options, passwords):
         for page in pages:
             if tool_id == "rotate": page.set_rotation((page.rotation + int(opts["angle"])) % 360)
             elif tool_id == "crop": page.set_cropbox(rectangle(opts["rect"], page))
-            elif tool_id == "watermark": page.insert_text((30, 40), str(opts["text"]), fontsize=18, color=(0.5, 0.5, 0.5))
+            elif tool_id == "watermark":
+                rect = pymupdf.Rect(30, max(30, page.rect.height / 2 - 35), page.rect.width - 30, page.rect.height / 2 + 35)
+                mark = page.add_freetext_annot(rect, str(opts["text"]), fontsize=24, text_color=(0.45, 0.45, 0.45), align=pymupdf.TEXT_ALIGN_CENTER)
+                mark.set_info(subject="pdf-toolkit-watermark", content=str(opts["text"]), title="PDF Toolkit")
+                mark.set_opacity(0.35)
+                mark.update()
+            elif tool_id == "remove-watermark":
+                if opts["mode"] == "remove-app":
+                    for annotation in list(page.annots() or []):
+                        if annotation.info.get("subject") == "pdf-toolkit-watermark":
+                            page.delete_annot(annotation)
+                elif opts["mode"] == "remove-text":
+                    if opts.get("confirm") not in (True, "true", "1", 1):
+                        raise ValueError("Confirm destructive external text removal.")
+                    target = str(opts.get("text", "")).strip()
+                    if not target:
+                        raise ValueError("Provide the exact watermark text to remove.")
+                    matches = page.search_for(target)
+                    for match in matches:
+                        page.add_redact_annot(match, fill=(1, 1, 1))
+                    if matches:
+                        page.apply_redactions()
             elif tool_id == "note": page.add_text_annot((30, 30), str(opts["text"]))
             elif tool_id == "highlight":
                 for rect in page.search_for(str(opts["text"])): page.add_highlight_annot(rect)
@@ -174,3 +277,8 @@ def process(tool_id, paths, options, passwords):
             if not 8 <= len(password) <= 40: raise ValueError("Use a PDF password of 8–40 characters.")
             save.update(encryption=pymupdf.PDF_ENCRYPT_AES_256, owner_pw=password, user_pw=password)
         return f"{tool_id}.pdf", doc.tobytes(**save), "application/pdf"
+
+
+def re_language(value):
+    import re
+    return bool(re.fullmatch(r"[A-Za-z0-9_]+(?:\+[A-Za-z0-9_]+)*", value))

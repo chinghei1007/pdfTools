@@ -3,8 +3,8 @@ export function FileProgress({ value, label = "Processing" }) {
     ? Math.min(100, Math.max(0, value))
     : undefined;
   return (
-    <div className="flex flex-col gap-2" role="status">
-      <span className="text-sm text-slate-700">
+    <div className="pdf-progress" role="status">
+      <span className="pdf-progress__label">
         {label}
         {progress !== undefined && ` · ${Math.round(progress)}%`}
       </span>
@@ -12,7 +12,7 @@ export function FileProgress({ value, label = "Processing" }) {
         aria-label={label}
         value={progress}
         max={100}
-        className="h-2 w-full accent-slate-900"
+        className="pdf-progress__bar"
       />
     </div>
   );
@@ -37,11 +37,7 @@ export function ProcessingStatus({ status = "idle", progress, message }) {
   return (
     <p
       role={status === "failed" ? "alert" : "status"}
-      className={
-        status === "failed"
-          ? "m-0 text-sm text-red-700"
-          : "m-0 text-sm text-green-700"
-      }
+      className={status === "failed" ? "pdf-error" : "pdf-success"}
     >
       {message ||
         (status === "failed"

@@ -8,10 +8,8 @@ export function SidebarButton({ active, children, className, ...props }) {
       {...props}
       aria-current={active ? "page" : undefined}
       className={cx(
-        "w-full rounded-lg border-0 px-4 py-3 text-left text-sm cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed",
-        active
-          ? "bg-white text-slate-950 font-semibold shadow-sm"
-          : "bg-transparent text-slate-700 hover:bg-white/60",
+        "pdf-sidebar__button",
+        active && "pdf-sidebar__button--active",
         className,
       )}
     >
@@ -24,13 +22,13 @@ export function SidebarGroup({ label, children, defaultExpanded = false }) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const id = useId();
   return (
-    <div>
+    <div className="pdf-sidebar__group">
       <SidebarButton
         aria-expanded={expanded}
         aria-controls={id}
         onClick={() => setExpanded(!expanded)}
       >
-        <span className="flex justify-between gap-2">
+        <span className="pdf-sidebar__group-label">
           {label}
           <span aria-hidden="true">{expanded ? "−" : "+"}</span>
         </span>
@@ -38,7 +36,7 @@ export function SidebarGroup({ label, children, defaultExpanded = false }) {
       <div
         id={id}
         hidden={!expanded}
-        className="ml-4 border-l border-solid border-slate-300 pl-2"
+        className="pdf-sidebar__children"
       >
         {children}
       </div>
@@ -78,12 +76,12 @@ function contains(item, id) {
 
 export function Sidebar({ title, items = [], selectedId, onSelect, children }) {
   return (
-    <aside className="box-border w-full shrink-0 bg-white/40 p-4 md:w-60">
+    <aside className="pdf-sidebar">
       <nav aria-label={title || "Tools"}>
-        <h2 className="m-0 mb-3 px-4 text-xs font-semibold uppercase tracking-wider text-slate-600">
+        <h2 className="pdf-sidebar__title">
           {title}
         </h2>
-        <div className="flex flex-col gap-1">
+        <div className="pdf-sidebar__items">
           <Items items={items} selectedId={selectedId} onSelect={onSelect} />
           {children}
         </div>

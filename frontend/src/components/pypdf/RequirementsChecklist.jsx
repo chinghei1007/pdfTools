@@ -26,7 +26,7 @@ export default function RequirementsChecklist() {
         value={filter}
         onChange={(event) => setFilter(event.target.value)}
       />
-      <div className="mt-4 flex max-h-96 flex-col gap-4 overflow-auto">
+      <div className="pdf-checklist">
         {rows
           .filter((row) =>
             `${row.group} ${row.function} ${row.status}`
@@ -36,14 +36,14 @@ export default function RequirementsChecklist() {
           .map((row) => (
             <article
               key={row.function}
-              className="rounded-lg border border-solid border-slate-200 p-3"
+              className="pdf-checklist__item"
             >
-              <strong className="break-all">{row.function}</strong>
-              <p className="text-sm">
+              <strong className="pdf-checklist__function">{row.function}</strong>
+              <p>
                 {row.group} · {row.status}
                 {row.tool && ` · ${row.tool}`}
               </p>
-              <p className="text-sm text-slate-600">{row.check}</p>
+              <p className="pdf-muted">{row.check}</p>
             </article>
           ))}
       </div>

@@ -5,6 +5,7 @@ import { Button } from "@components/buttons/Button";
 export function ResultPanel({ files = [], onDownload, onReset, children }) {
   return (
     <BodyCard
+      className="pdf-result"
       title="Final preview"
       description="Review your processed files."
       footer={
@@ -15,24 +16,24 @@ export function ResultPanel({ files = [], onDownload, onReset, children }) {
         )
       }
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="pdf-result__files">
         {files.map((entry) => (
           <FileItem
             key={entry.id}
             entry={entry}
             actions={
               <Button
-                disabled={!onDownload}
+                disabled={!onDownload || entry.available === false}
                 onClick={() => onDownload?.(entry)}
               >
-                Download
+                {entry.available === false ? "Unavailable" : "Download"}
               </Button>
             }
           />
         ))}
       </div>
       {!files.length && (
-        <p className="text-sm text-slate-600">No output files available.</p>
+        <p className="pdf-muted">No output files available.</p>
       )}
       {children}
     </BodyCard>

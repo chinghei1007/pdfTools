@@ -100,7 +100,10 @@ def make_preview(id: str, body: PreviewRequest, request: Request):
             except Exception: raise HTTPException(422, "Preview failed. Check page number and password.") from None
             target.write_bytes(data)
             with store.connect() as db:
-                db.execute("INSERT OR REPLACE INTO previews VALUES(?,?,?,?)", (id, body.page, width, height))
+                db.execute(
+                    "INSERT OR REPLACE INTO previews(file_id,page,width,height) VALUES(?,?,?,?)",
+                    (id, body.page, width, height),
+                )
         else: width, height = cached["width"], cached["height"]
     logger.info("pymupdf preview.ready")
     return dict(url=f"/api/v1/pymupdf/files/{id}/preview?page={body.page}", width=width, height=height, cached=bool(cached))

@@ -26,6 +26,9 @@ class PypdfTest(ServiceTest):
                 if tool['id']=='encrypt': options={'password':'example-password'}
                 elif tool['id']=='remove': options={'pages':'2'}
                 elif tool['id']=='fill': options={'values':'{"Name":"Test user"}'};ids=[form]
+                elif tool['id']=='field-info': options={'field_name':'Name'};ids=[form]
+                elif tool['id'] in ('overlay','underlay','insert'): ids=[self.id,self.id]
+                elif tool['id']=='add-attachment': ids=[self.id,self.id]
                 elif tool['id']=='image-to-pdf': ids=[image]
                 response=self.run_pypdf(tool['id'],options,ids)
                 self.assertEqual(response.status_code,200,response.text)
@@ -45,6 +48,15 @@ class PypdfTest(ServiceTest):
         response=self.run_pypdf('render',{'pages':'2','format':'png'})
         self.assertEqual(response.status_code,200,response.text)
         self.assertTrue(self.client.get(response.json()['downloadUrl']).content.startswith(b'\x89PNG'))
+
+    def test_supported_annotation_types(self):
+        supported = ['free_text','rectangle','ellipse','line','polygon','highlight','text','link','uri_link']
+        for annotation_type in supported:
+            with self.subTest(annotation_type=annotation_type):
+                response = self.run_pypdf('add-annotation', {'annotation_type': annotation_type})
+                self.assertEqual(response.status_code, 200, response.text)
+                reader = PdfReader(io.BytesIO(self.client.get(response.json()['downloadUrl']).content))
+                self.assertTrue(reader.pages[0].get('/Annots'))
 
 
 if __name__=='__main__': unittest.main()

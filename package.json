@@ -2,8 +2,11 @@
   "name": "pdftools-root",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.mjs",
+    "dev": "concurrently -k \"npm run backend\" \"npm run dev --prefix frontend\"",
     "backendSetup": "node scripts/backend-setup.mjs",
     "backend": "node scripts/backend-run.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }

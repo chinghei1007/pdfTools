@@ -18,7 +18,7 @@ def add(id, label, category, fields=(), input="pdf", multiple=False):
 
 
 add("image-to-pdf", "Images to PDF", "Convert", input="image", multiple=True)
-add("render", "PDF pages to images", "Convert", [PAGES, field("format", "Image format", "select", "png", ["png", "jpg"]), field("dpi", "DPI (36–144)", "number", 96)])
+add("render", "PDF pages to images", "Convert", [PAGES, field("format", "Image format", "select", "png", ["png", "jpg"]), field("dpi", "DPI (36–300)", "number", 96)])
 add("svg", "Pages to SVG", "Convert", [PAGES])
 add("text", "Extract text / HTML / XML", "Extract", [PAGES, field("format", "Text format", "select", "text", ["text", "html", "xhtml", "xml", "json"])])
 for id, label in [("images", "Embedded images"), ("tables", "Tables (JSON)"), ("annotations", "Annotations (JSON)"), ("links", "Links (JSON)"), ("drawings", "Vector drawings (JSON)"), ("widgets", "Form fields (JSON)")]:

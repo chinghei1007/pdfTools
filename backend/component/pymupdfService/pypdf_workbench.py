@@ -10,7 +10,7 @@ TOOLS = []
 def add(id, label, category, fields=(), multiple=False, engine='pypdf', input='pdf'):
     TOOLS.append(dict(id=id, label=label, category=category, fields=list(fields), multiple=multiple, engine=engine, input=input))
 
-add('render', 'PDF to images · PyMuPDF renderer', 'Conversion', [PAGES, field('format','Output format','select','png',['png','jpg']), field('dpi','DPI (36–144)','number',96)], engine='PyMuPDF')
+add('render', 'PDF to images · PyMuPDF renderer', 'Conversion', [PAGES, field('format','Output format','select','png',['png','jpg']), field('dpi','DPI (36–300)','number',96)], engine='PyMuPDF')
 add('image-to-pdf','Images to PDF · PyMuPDF','Conversion', multiple=True, engine='PyMuPDF', input='image')
 add('select','Reorder / select individual pages','Pages',[PAGES])
 add('merge','Merge PDFs with per-file ranges','Pages',[field('ranges','Per-file page ranges, separated by semicolons (blank = all)')],multiple=True)

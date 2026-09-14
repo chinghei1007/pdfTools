@@ -115,7 +115,7 @@ def process(tool_id, paths, options, passwords):
                 name = f"page-{index + 1}"
                 if tool_id == "render":
                     dpi = int(opts["dpi"])
-                    if not 36 <= dpi <= 144 or page.rect.width * page.rect.height * (dpi / 72) ** 2 > 12_000_000:
+                    if not 36 <= dpi <= 300 or page.rect.width * page.rect.height * (dpi / 72) ** 2 > 12_000_000:
                         raise ValueError("DPI must be 36–144; rendered page must be under 12 megapixels.")
                     fmt = opts["format"]
                     items.append((f"{name}.{fmt}", page.get_pixmap(dpi=dpi, alpha=False).tobytes("jpeg" if fmt == "jpg" else fmt), "image/jpeg" if fmt == "jpg" else "image/png"))

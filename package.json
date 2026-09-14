@@ -2,7 +2,7 @@
   "name": "pdftools-root",
   "private": true,
   "scripts": {
-    "dev": "concurrently -k \"npm run backend\" \"npm run dev --prefix frontend\"",
+    "dev": "concurrently --kill-others-on-fail \"npm run backend\" \"npm run dev --prefix frontend\"",
     "backendSetup": "node scripts/backend-setup.mjs",
     "backend": "node scripts/backend-run.mjs"
   },

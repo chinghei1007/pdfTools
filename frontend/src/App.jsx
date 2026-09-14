@@ -42,6 +42,7 @@ function Toolkit() {
   const [historyTool, setHistoryTool] = useState("");
   const [theme, setTheme] = useState(() => localStorage.getItem("pdf-toolkit-theme") || "auto");
   const [systemDark, setSystemDark] = useState(() => matchMedia("(prefers-color-scheme: dark)").matches);
+  const resolvedTheme = resolveThemePreference(theme, systemDark);
   const activeRoute = useRef("");
   const lastTools = useRef({ pypdf: "render", pymupdf: "render" });
   const resultRef = useRef(null);
@@ -56,13 +57,13 @@ function Toolkit() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = resolveThemePreference(theme, systemDark);
+    document.documentElement.dataset.theme = resolvedTheme;
     localStorage.setItem("pdf-toolkit-theme", theme);
-  }, [theme, systemDark]);
+  }, [theme, resolvedTheme]);
 
   useEffect(() => {
     applyEngineTheme(document.documentElement, engine);
-  }, [engine]);
+  }, [engine, resolvedTheme]);
 
   useEffect(() => {
     const controller = new AbortController();
